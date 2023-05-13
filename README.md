@@ -2,7 +2,7 @@
 - [Introduction](#introduction)
   - [System Requirements Guidance](#system-requirements-guidance)
   - [Official Product Pages](#official-product-pages)
-  - [Final Remarks](#final-remarks)
+  - [Final Remarks and Disclaimers](#final-remarks-and-disclaimers)
 
 
 # Introduction
@@ -44,7 +44,7 @@ Many other tools and command were also used, and the following must therefore al
 * A text editor or IDE (Vim and VSCode will do, but this is largely personal preference)
 * Python3 (some scripts for managing Git repositories were written in Python)
 
-## Final Remarks
+## Final Remarks and Disclaimers
 
 The LAB demonstrates some concepts and is not to be interpreted as anything official or as a reference implementation. In fact, it is probably more useful in the context of learning and testing, especially testing upgrades of key software components. 
 
@@ -56,4 +56,7 @@ Many of the LAB settings were deliberately made insecure to concentrate on the f
 > These configurations are **NOT PRODUCTION READY**
 
 It is highly recommended that the LAB systems be shutdown after use to avoid potential security issues. 
+
+> **Warning**
+> In addition, keep in mind that LAB environments may be unstable and may cause damage to your system, either by causing data loss or by causing some other form of damage. As such, the owner of this repository (or owners of forks of this repository) cannot be held liable for any damages as a result of using this LAB and following its instructions. Each person using the tools, scripts and other artifacts provided, do so entirely at their own risk. It is highly recommended to experiment with this LAB on a dedicated system that does not have any sensitive or important data stored on it.
 
