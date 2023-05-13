@@ -65,6 +65,8 @@ It is highly recommended that the LAB systems be shutdown after use to avoid pot
 
 <div style="text-align: center;"><img src="https://github.com/nicc777/kubernetes-cicd-lab-local/raw/main/lab_setup.drawio.png" /></div>
 
+![a](lab_setup.drawio.png)
+
 
 Below is a list of objectives of the LAB. Each checked item means the task is more-or-less ready for LAB use. In this lab you fill find instructions for the following:
 
