@@ -1,9 +1,12 @@
-<mxfile host="Electron" modified="2023-05-13T15:27:15.346Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.1.2 Chrome/106.0.5249.199 Electron/21.4.3 Safari/537.36" etag="bwvgUDiu0IS965688rfq" version="21.1.2" type="device">
+<mxfile host="Electron" modified="2023-05-13T15:54:36.181Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.1.2 Chrome/106.0.5249.199 Electron/21.4.3 Safari/537.36" etag="XGOiX15fQTFWViQTMmd5" version="21.1.2" type="device">
   <diagram name="Main Components" id="VJDyEIjPcPCLrpJ2Zc_k">
     <mxGraphModel dx="1185" dy="682" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="razDRBJKW-55HYQWIfHd-15" value="" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="520" height="680" as="geometry" />
+        </mxCell>
         <mxCell id="razDRBJKW-55HYQWIfHd-9" value="Kubernetes (K3s)" style="fillColor=none;strokeColor=#5A6C86;dashed=1;verticalAlign=top;fontStyle=0;fontColor=#5A6C86;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="80" y="400" width="440" height="280" as="geometry" />
         </mxCell>
