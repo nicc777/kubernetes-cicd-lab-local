@@ -4,6 +4,7 @@
   - [Official Product Pages](#official-product-pages)
   - [Final Remarks and Disclaimers](#final-remarks-and-disclaimers)
 - [Lab Objectives](#lab-objectives)
+- [Organization and File Layout](#organization-and-file-layout)
 
 
 # Introduction
@@ -83,3 +84,18 @@ Below is a list of objectives of the LAB. Each checked item means the task is mo
 The Web UI will also be used for ArgoCD and Jenkins and as such some steps may be explained based on Firefox. Most of the concepts should also work perfectly on other browsers.
 
 Throughout the experiments you may also want to use additional tools like `kubectl`, `k9s` and the web interface of `traefik`. These may be mentioned, but is completely optional and various other tools may work just as good.
+
+# Organization and File Layout
+
+> **Note**
+> These are still some ideas and the actual implementation may change
+
+Each objective will be dealt with in a separate MarkDown file numbered roughly in the order in which it should be done. There may be some overlap of instructions in some files.
+
+There are also two directories for the projects earmarked for Gitlab:
+
+* Directory `cluster-deployments/` - Will contain the prepared Helm charts for ArgoCD to deploy. This will be the repository in Gitlab that ArgoCD monitors
+* Directory `application-repo-01/` - This is a sample application artifacts. Changes in this repository will result in Jenkins building a new set of artifacts targeting the `cluster-deployments` repository. Each build will be deployed in a new namespace.
+* Directory `deployment-maintenance/` - A repository that will be run in Jenkins on a cron schedule to perform various maintenance tasks, like removing old deployments.
+
+There is also be a directory called `lab_artifacts/`  which include docker files, kubernetes manifests, Helm values files, scripts and other files that can be used in the labs.
