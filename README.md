@@ -3,6 +3,7 @@
   - [System Requirements Guidance](#system-requirements-guidance)
   - [Official Product Pages](#official-product-pages)
   - [Final Remarks and Disclaimers](#final-remarks-and-disclaimers)
+- [Lab Objectives](#lab-objectives)
 
 
 # Introduction
@@ -60,3 +61,24 @@ It is highly recommended that the LAB systems be shutdown after use to avoid pot
 > **Warning**
 > In addition, keep in mind that LAB environments may be unstable and may cause damage to your system, either by causing data loss or by causing some other form of damage. As such, the owner of this repository (or owners of forks of this repository) cannot be held liable for any damages as a result of using this LAB and following its instructions. Each person using the tools, scripts and other artifacts provided, do so entirely at their own risk. It is highly recommended to experiment with this LAB on a dedicated system that does not have any sensitive or important data stored on it.
 
+# Lab Objectives
+
+![Lab Environment](lab_setup.drawio.png)
+
+Below is a list of objectives of the LAB. Each checked item means the task is more-or-less ready for LAB use. In this lab you fill find instructions for the following:
+
+* [ ] Deploy a 4x node K3s Kubernetes cluster using Multipass on Ubuntu (script)
+* [ ] Deploy ArgoCD using Helm
+* [ ] Prepare environment and install Gitlab in Docker, including some post installation steps
+* [ ] Prepare environment and install Jenkins in Docker
+* [ ] Setup Jenkins to use Docker Plugin for Builds
+* [ ] Create initial Gitlab repositories
+* [ ] Link Jenkins and Gitlab and perform first builds
+* [ ] Link ArgoCD to Gitlab for first deployments
+* [ ] Perform some common operational procedures:
+  * [ ] Update a project and subsequent deployment
+  * [ ] Add a suspend feature to remove deployments temporarily or permanently based on configuration
+
+The Web UI will also be used for ArgoCD and Jenkins and as such some steps may be explained based on Firefox. Most of the concepts should also work perfectly on other browsers.
+
+Throughout the experiments you may also want to use additional tools like `kubectl`, `k9s` and the web interface of `traefik`. These may be mentioned, but is completely optional and various other tools may work just as good.
