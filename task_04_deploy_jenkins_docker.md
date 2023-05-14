@@ -212,7 +212,7 @@ It should build on a Docker node without any issues:
 
 Following the instruction from https://www.jenkins.io/doc/pipeline/tour/hello-world/ - create a Python project and test.
 
-The follwing is a slightly modified Groovy script for this task:
+The following is a slightly modified Groovy script for this task:
 
 ```groovy
 pipeline {
