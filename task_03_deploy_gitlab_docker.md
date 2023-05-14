@@ -39,7 +39,7 @@ sudo service docker restart
 > **Note**
 > This step is technically only required from the Jenkins step, but doing this at this early stage prevents any potential issues with Gitlab later on 
 
-> **WARNING**
+> **Warning**
 > This process will make your LAB environment insecure and it is highly recommended that he LAB network is in a network that does not allow any direct connection from the Internet. 
 
 # Running Gitlab in Docker
