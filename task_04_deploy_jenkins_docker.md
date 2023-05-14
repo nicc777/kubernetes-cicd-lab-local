@@ -114,6 +114,7 @@ Some tasks you can do now (without showing the details):
 * Create a user
 * Update any plugins due for update
 * Restart Jenkins (as part of the plugin update)
+* Set the hostname to something like `jenkins.example.tld` (the entry was already added to `/etc/hosts` during the Gitlab installation task)
 
 ## Build Nodes
 
