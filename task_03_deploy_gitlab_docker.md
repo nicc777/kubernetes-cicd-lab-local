@@ -153,10 +153,6 @@ Next, as an administrative user (like `root`), create the following blank projec
 * `application-repo-01`
 * `deployment-maintenance`
 
-After adding the LAB users to the `lab` group, the users view in Gitlab should look something like this:
-
-![users](screenshots/gitlab_users.png)
-
 Creating a new project should look something like this:
 
 ![Create Project](screenshots/gitlab_project_create.png)
@@ -168,6 +164,10 @@ Afterwards, you should see something like the following:
 For the LAB experiments to run more smoothly, remove the branch protection from the `main` branch for each of the new projects:
 
 ![Branch Protection](screenshots/gitlab_protected_branches.png)
+
+After adding the LAB users to the `lab` group, the users view in Gitlab should look something like this:
+
+![users](screenshots/gitlab_users.png)
 
 ## Import Initial Projects
 
