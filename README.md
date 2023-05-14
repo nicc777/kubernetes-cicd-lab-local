@@ -5,6 +5,7 @@
   - [Final Remarks and Disclaimers](#final-remarks-and-disclaimers)
 - [Lab Objectives](#lab-objectives)
 - [Organization and File Layout](#organization-and-file-layout)
+- [Detailed LAB Notes and Tasks](#detailed-lab-notes-and-tasks)
 
 
 # Introduction
@@ -69,7 +70,7 @@ It is highly recommended that the LAB systems be shutdown after use to avoid pot
 
 Below is a list of objectives of the LAB. Each checked item means the task is more-or-less ready for LAB use. In this lab you fill find instructions for the following:
 
-* [ ] Deploy a 4x node K3s Kubernetes cluster using Multipass on Ubuntu (script)
+* [x] Deploy a 4x node K3s Kubernetes cluster using Multipass on Ubuntu (script)
 * [ ] Deploy ArgoCD using Helm
 * [ ] Prepare environment and install Gitlab in Docker, including some post installation steps
 * [ ] Prepare environment and install Jenkins in Docker
@@ -99,3 +100,11 @@ There are also two directories for the projects earmarked for Gitlab:
 * Directory `deployment-maintenance/` - A repository that will be run in Jenkins on a cron schedule to perform various maintenance tasks, like removing old deployments.
 
 There is also be a directory called `lab_artifacts/`  which include docker files, kubernetes manifests, Helm values files, scripts and other files that can be used in the labs.
+
+# Detailed LAB Notes and Tasks
+
+To follow the entire LAB, it is recommended to follow each task to completion in sequence.
+
+| Task Number | File                                                        |
+|:-----------:|-------------------------------------------------------------|
+| 01          | [task_01_deploy_k3s.md](./task_01_deploy_k3s.md)            |
