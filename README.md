@@ -95,7 +95,6 @@ Each objective will be dealt with in a separate MarkDown file numbered roughly i
 
 There are also two directories for the projects earmarked for Gitlab:
 
-* Directory `cluster-deployments/` - Will contain the prepared Helm charts for ArgoCD to deploy. This will be the repository in Gitlab that ArgoCD monitors
 * Directory `application-repo-01/` - This is a sample application artifacts. Changes in this repository will result in Jenkins building a new set of artifacts targeting the `cluster-deployments` repository. Each build will be deployed in a new namespace.
 * Directory `deployment-maintenance/` - A repository that will be run in Jenkins on a cron schedule to perform various maintenance tasks, like removing old deployments.
 

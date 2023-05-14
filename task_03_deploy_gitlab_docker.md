@@ -5,6 +5,7 @@
 - [Post Installation Tasks](#post-installation-tasks)
   - [Add hosts entry](#add-hosts-entry)
   - [Add Users](#add-users)
+  - [Create a LAB group in Gitlab](#create-a-lab-group-in-gitlab)
   - [Import Initial Projects](#import-initial-projects)
 
 
@@ -142,6 +143,23 @@ Without the SSH config, you need to run the following:
 ```shell
 GIT_SSH_COMMAND='ssh -i ~/.ssh/gitlab_local_docker -p 8022 -o IdentitiesOnly=yes' git clone git@gitlab:$USER/test.git
 ```
+
+## Create a LAB group in Gitlab
+
+Using the web UI, create a group called `lab` and add the test users with a role of `Developer` to the group.
+
+Afterwards, as an administrative user (like `root`), create the following blank projects with a README.md for the `lab` group:
+
+* `application-repo-01`
+* `deployment-maintenance`
+
+Creating a new project should look something like this:
+
+![Create Project](screenshots/gitlab_project_create.png)
+
+Afterwards, you should see something like the following:
+
+![projects](screenshots/gitlab_lab_projects.png)
 
 ## Import Initial Projects
 
