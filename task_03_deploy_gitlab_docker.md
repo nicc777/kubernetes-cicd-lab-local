@@ -92,7 +92,7 @@ In the LAB environment you could use just the `root` account, but in order to te
 
 At the same time, it may be a good idea to also create 2x local Unix user accounts. Create SSH keys for each and add the public keys to the corresponding Gitlab users.
 
-> **NOTE**
+> **Note**
 > It may be a good idea to use the same username for the Unix account as well as the Gitlab account. It will then allow you to user variables like `$USER` in commands as shown below
 
 The following command adds two Unix user accounts that will be active for 1 week:
