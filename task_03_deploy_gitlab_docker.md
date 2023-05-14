@@ -28,6 +28,14 @@ Replace the line `ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containe
 ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:4243 -H unix:///var/run/docker.sock
 ```
 
+Afterwards run:
+
+```shell
+sudo systemctl daemon-reload
+
+sudo service docker restart
+```
+
 > **Note**
 > This step is technically only required from the Jenkins step, but doing this at this early stage prevents any potential issues with Gitlab later on 
 
