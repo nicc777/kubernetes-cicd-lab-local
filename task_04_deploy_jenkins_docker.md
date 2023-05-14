@@ -185,6 +185,7 @@ Final Tasks
 
 * Install the Docker plugin
 * Configure Docker Cloud as described in https://devopscube.com/docker-containers-as-build-slaves-jenkins/
+    * In the LAB, the label `docker-build-node` refers to the Docker build nodes.
 
 # Testing
 
