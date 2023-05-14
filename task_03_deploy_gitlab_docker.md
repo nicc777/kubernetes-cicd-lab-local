@@ -100,7 +100,7 @@ The following command adds two Unix user accounts that will be active for 1 week
 ```shell
 sudo useradd -m -s /usr/bin/zsh -c "LAB Test User" -e `date +%Y-%m-%d -d "+7 days"` lab_user_1
 
-sudo useradd -m -s /usr/bin/zsh -c "LAB Test User" -e `date +%Y-%m-%d -d "+7 days"` lab_user_1
+sudo useradd -m -s /usr/bin/zsh -c "LAB Test User" -e `date +%Y-%m-%d -d "+7 days"` lab_user_2
 
 # Verify Expiry:
 (sudo chage -l lab_user_1 && sudo chage -l lab_user_2) | grep "Account expires"
