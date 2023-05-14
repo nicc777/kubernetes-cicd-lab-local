@@ -161,6 +161,10 @@ Afterwards, you should see something like the following:
 
 ![projects](screenshots/gitlab_lab_projects.png)
 
+After adding the LAB users to the `lab` group, the users view in Gitlab should look something like this:
+
+![users](screenshots/gitlab_users.png)
+
 ## Import Initial Projects
 
 TODO
