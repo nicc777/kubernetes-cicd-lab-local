@@ -73,9 +73,9 @@ Below is a list of objectives of the LAB. Each checked item means the task is mo
 * [x] Deploy a 4x node K3s Kubernetes cluster using Multipass on Ubuntu (script)
 * [x] Deploy ArgoCD using Helm, including some post installation steps
 * [x] Prepare environment and install Gitlab in Docker, including some post installation steps
-* [ ] Prepare environment and install Jenkins in Docker
-* [ ] Setup Jenkins to use Docker Plugin for Builds
-* [ ] Create initial Gitlab repositories
+* [x] Prepare environment and install Jenkins in Docker
+* [x] Setup Jenkins to use Docker Plugin for Builds
+* [x] Create initial Gitlab repositories
 * [ ] Link Jenkins and Gitlab and perform first builds
 * [ ] Link ArgoCD to Gitlab for first deployments
 * [ ] Perform some common operational procedures:
