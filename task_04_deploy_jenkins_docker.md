@@ -62,6 +62,10 @@ docker volume create jenkins-data
 
 docker network create jenkins
 
+# NOTE !!!
+#
+#   Replace the IP addresses below with the relevant IP addresses for your environment
+
 docker run \
   --name jenkins-docker \
   --rm \
