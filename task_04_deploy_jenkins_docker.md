@@ -180,7 +180,11 @@ docker push $USER/jenkins-slave-modified:latest
 
 cd
 ```
-Next install the Docker plugin
+
+Final Tasks
+
+* Install the Docker plugin
+* Configure Docker Cloud as described in https://devopscube.com/docker-containers-as-build-slaves-jenkins/
 
 # Testing
 
@@ -198,7 +202,23 @@ It should build on a Docker node without any issues:
 
 ## A Test Python Project
 
-Following the instruction from https://www.jenkins.io/doc/pipeline/tour/hello-world/ - create a Python project and test:
+Following the instruction from https://www.jenkins.io/doc/pipeline/tour/hello-world/ - create a Python project and test.
+
+The follwing is a slightly modified Groovy script for this task:
+
+```groovy
+pipeline {
+    //agent { docker { image 'python:3.10.7-alpine' } }
+    agent { node { label "docker-build-node" }}
+    stages {
+        stage('build') {
+            steps {
+                sh 'python3 --version'
+            }
+        }
+    }
+}
+```
 
 ![Python Test](screenshots/jenkins_python_test.png)
 
