@@ -181,8 +181,6 @@ sudo su - lab_user_1
 
 git clone https://github.com/nicc777/kubernetes-cicd-lab-local.git
 
-ssh-keygen -f $HOME/.ssh/gitlab_local_docker 
-
 # Add the following public key to your GitLab account
 cat .ssh/gitlab_local_docker.pub 
 
