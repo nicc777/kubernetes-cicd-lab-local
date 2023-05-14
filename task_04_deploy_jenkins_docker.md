@@ -189,6 +189,8 @@ Final Tasks
 
 # Testing
 
+![Jenkins Dashboard](screenshots/jenkins_dashboard.png)
+
 Create a test build or two.
 
 Below are two examples:
