@@ -5,7 +5,7 @@
 - [Post Installation Tasks](#post-installation-tasks)
   - [Add hosts entry](#add-hosts-entry)
   - [Add Users](#add-users)
-  - [Create a LAB group in Gitlab](#create-a-lab-group-in-gitlab)
+  - [Create Initial Group and Project](#create-initial-group-and-project)
   - [Import Initial Projects](#import-initial-projects)
 
 
@@ -144,9 +144,13 @@ Without the SSH config, you need to run the following:
 GIT_SSH_COMMAND='ssh -i ~/.ssh/gitlab_local_docker -p 8022 -o IdentitiesOnly=yes' git clone git@gitlab:$USER/test.git
 ```
 
-## Create a LAB group in Gitlab
+## Create Initial Group and Project
 
 Using the web UI, create a group called `lab` and add the test users with a role of `Developer` to the group.
+
+After adding the LAB users to the `lab` group, the users view in Gitlab should look something like this:
+
+![users](screenshots/gitlab_users.png)
 
 Afterwards, as an administrative user (like `root`), create the following blank projects with a README.md for the `lab` group:
 
@@ -161,10 +165,56 @@ Afterwards, you should see something like the following:
 
 ![projects](screenshots/gitlab_lab_projects.png)
 
-After adding the LAB users to the `lab` group, the users view in Gitlab should look something like this:
+For the LAB experiments to run more smoothly, remove the branch protection from the `main` branch for each of the new projects:
 
-![users](screenshots/gitlab_users.png)
+![Branch Protection](screenshots/gitlab_protected_branches.png)
 
 ## Import Initial Projects
 
-TODO
+As one of the LAB users, run the following commands to import the example projects:
+
+```shell
+# MAIN USER
+sudo su - lab_user_1
+
+# The rest of the commands are now run as user lab_user_1
+
+git clone https://github.com/nicc777/kubernetes-cicd-lab-local.git
+
+ssh-keygen -f $HOME/.ssh/gitlab_local_docker 
+
+# Add the following public key to your GitLab account
+cat .ssh/gitlab_local_docker.pub 
+
+git clone git@gitlab:lab/application-repo-01.git 
+
+git clone git@gitlab:lab/deployment-maintenance.git 
+
+cp -vfr kubernetes-cicd-lab-local/application-repo-01/* application-repo-01 
+
+cp -vfr kubernetes-cicd-lab-local/deployment-maintenance/* deployment-maintenance 
+
+cd application-repo-01 
+
+git config --local user.name "User1"
+
+git config --local user.email "user1@localhost"
+
+add .
+
+git commit -m "Import"
+
+git push origin main
+
+cd ../deployment-maintenance
+
+git config --local user.name "User1"
+
+git config --local user.email "user1@localhost"
+
+add .
+
+git commit -m "Import"
+
+git push origin main
+```
