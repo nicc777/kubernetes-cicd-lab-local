@@ -108,4 +108,5 @@ To follow the entire LAB, it is recommended to follow each task to completion in
 |:-----------:|----------------------------------------------------------------------------------------|
 | 01          | [task_01_deploy_k3s.md](./task_01_deploy_k3s.md)                                       |
 | 02          | [task_02_deploy_argocd_in_kubernetes.md](./task_02_deploy_argocd_in_kubernetes.md)     |
-| 03          | [task_03_deploy_gitlab_docker.md](./task_03_deploy_gitlab_docker.md)
+| 03          | [task_03_deploy_gitlab_docker.md](./task_03_deploy_gitlab_docker.md)                   |
+| 04          | [task_04_deploy_jenkins_docker.md](./task_04_deploy_jenkins_docker.md)                 |
