@@ -71,7 +71,7 @@ It is highly recommended that the LAB systems be shutdown after use to avoid pot
 Below is a list of objectives of the LAB. Each checked item means the task is more-or-less ready for LAB use. In this lab you fill find instructions for the following:
 
 * [x] Deploy a 4x node K3s Kubernetes cluster using Multipass on Ubuntu (script)
-* [x] Deploy ArgoCD using Helm
+* [x] Deploy ArgoCD using Helm, including some post installation steps
 * [ ] Prepare environment and install Gitlab in Docker, including some post installation steps
 * [ ] Prepare environment and install Jenkins in Docker
 * [ ] Setup Jenkins to use Docker Plugin for Builds
@@ -109,3 +109,4 @@ To follow the entire LAB, it is recommended to follow each task to completion in
 |:-----------:|----------------------------------------------------------------------------------------|
 | 01          | [task_01_deploy_k3s.md](./task_01_deploy_k3s.md)                                       |
 | 02          | [task_02_deploy_argocd_in_kubernetes.md](./task_02_deploy_argocd_in_kubernetes.md)     |
+| 03          | [task_03_deploy_gitlab_docker.md](./task_03_deploy_gitlab_docker.md)

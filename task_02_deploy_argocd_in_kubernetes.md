@@ -78,7 +78,7 @@ Add the hosts entry:
 ```shell
 sudo cp /etc/hosts /etc/hosts_BACKUP_lab_02
 
-echo "10.15.174.3   argocd argocd-grpc argocd.example.tld argocd-grpc.example.tld" >> /etc/hosts
+sudo echo "10.15.174.3   argocd argocd-grpc argocd.example.tld argocd-grpc.example.tld" >> /etc/hosts
 ```
 
 ## Web Browser Proxy Configuration
