@@ -148,14 +148,14 @@ GIT_SSH_COMMAND='ssh -i ~/.ssh/gitlab_local_docker -p 8022 -o IdentitiesOnly=yes
 
 Using the web UI, create a group called `lab` and add the test users with a role of `Developer` to the group.
 
-After adding the LAB users to the `lab` group, the users view in Gitlab should look something like this:
-
-![users](screenshots/gitlab_users.png)
-
-Afterwards, as an administrative user (like `root`), create the following blank projects with a README.md for the `lab` group:
+Next, as an administrative user (like `root`), create the following blank projects with a README.md for the `lab` group:
 
 * `application-repo-01`
 * `deployment-maintenance`
+
+After adding the LAB users to the `lab` group, the users view in Gitlab should look something like this:
+
+![users](screenshots/gitlab_users.png)
 
 Creating a new project should look something like this:
 
