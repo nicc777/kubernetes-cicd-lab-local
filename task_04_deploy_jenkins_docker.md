@@ -199,6 +199,11 @@ Below are two examples:
 
 Create a freestyle project, as describe on the page https://phoenixnap.com/kb/how-to-configure-docker-in-jenkins
 
+> **Note**
+> Pay special attention to the project configuration to ensure that the Docker build nodes are used:
+
+![Jenkins Docker Build Nodes Configuration](screenshots/jenkins_first_test_configuration.png)
+
 It should build on a Docker node without any issues:
 
 ![Jenkins First Test](screenshots/jenkins_first_test.png)
