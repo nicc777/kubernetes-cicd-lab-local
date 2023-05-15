@@ -65,6 +65,10 @@ docker run --detach \
   --volume gitlab_config:/etc/gitlab \
   --volume gitlab_logs:/var/log/gitlab \
   --volume gitlab_data:/var/opt/gitlab \
+  --add-host="argocd:10.15.174.3" \
+  --add-host="argocd.example.tld:10.15.174.3" \
+  --add-host="jenkins:192.168.2.18" \
+  --add-host="jenkins.example.tld:192.168.2.18" \
   --shm-size 256m \
   gitlab/gitlab-ce:15.9.8-ce.0
 
