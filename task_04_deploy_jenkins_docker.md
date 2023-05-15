@@ -230,3 +230,6 @@ pipeline {
 
 ![Python Test](screenshots/jenkins_python_test.png)
 
+When configuring the Jenkins Project, take note of the Webhook URL.
+
+
