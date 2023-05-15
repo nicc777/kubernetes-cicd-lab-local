@@ -104,10 +104,11 @@ There is also be a directory called `lab_artifacts/`  which include docker files
 
 To follow the entire LAB, it is recommended to follow each task to completion in sequence.
 
-| Task Number | File                                                                                   |
-|:-----------:|----------------------------------------------------------------------------------------|
-| 01          | [task_01_deploy_k3s.md](./task_01_deploy_k3s.md)                                       |
-| 02          | [task_02_deploy_argocd_in_kubernetes.md](./task_02_deploy_argocd_in_kubernetes.md)     |
-| 03          | [task_03_deploy_gitlab_docker.md](./task_03_deploy_gitlab_docker.md)                   |
-| 04          | [task_04_deploy_jenkins_docker.md](./task_04_deploy_jenkins_docker.md)                 |
-| 05          | [task_05_integrate_jenkins_and_gitlab.md](./task_05_integrate_jenkins_and_gitlab.md)   |
+| Task Number | File                                                                                                           |
+|:-----------:|----------------------------------------------------------------------------------------------------------------|
+| 01          | [task_01_deploy_k3s.md](./task_01_deploy_k3s.md)                                                               |
+| 02          | [task_02_deploy_argocd_in_kubernetes.md](./task_02_deploy_argocd_in_kubernetes.md)                             |
+| 03          | [task_03_deploy_gitlab_docker.md](./task_03_deploy_gitlab_docker.md)                                           |
+| 04          | [task_04_deploy_jenkins_docker.md](./task_04_deploy_jenkins_docker.md)                                         |
+| 05          | [task_05_integrate_jenkins_and_gitlab.md](./task_05_integrate_jenkins_and_gitlab.md)                           |
+| 06          | [task_06_setup_jenkins_build_for_test_application.md](./task_06_setup_jenkins_build_for_test_application.md)   |
