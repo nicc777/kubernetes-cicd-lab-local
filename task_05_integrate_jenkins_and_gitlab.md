@@ -3,6 +3,7 @@
   - [Preparation](#preparation)
   - [Integration Steps](#integration-steps)
 - [Testing and Verification](#testing-and-verification)
+- [References](#references)
 
 
 # Jenkins and Gitlab Integration
@@ -35,7 +36,7 @@ In Jenkins, you must first create install the Gitlab plugin, and then afterwards
 
 ![Jenkins Credentials](screenshots/integration_jenkins_add_token.png)
 
-Afterward, the Gitlab connection can be made in the Jenkins System COnfiguration page:
+Afterward, the Gitlab connection can be made in the Jenkins System Configuration page:
 
 ![Jenkins System Configuration for Gitlab](screenshots/integration_jenkins_add_gitlab_config.png)
 
@@ -53,3 +54,7 @@ On both Jenkins and Gitlab the event and integration can then be verified:
 ![Jenkins Task](screenshots/integration_test_webhook_jenkins_view.png)
 
 ![Gitab Status](screenshots/integration_test_webhook_gitlab_view.png)
+
+# References
+
+* Gitlab Plugin DOcumentation: https://plugins.jenkins.io/gitlab-plugin/
