@@ -62,7 +62,7 @@ docker volume create gitlab_data
 #   Replace the IP addresses below with the relevant IP addresses for your environment
 
 docker run --detach \
-  --hostname gitlab.example.com \
+  --hostname gitlab.example.tld \
   --publish 8443:443 --publish 8080:80 --publish 8022:22 \
   --name gitlab \
   --restart always \
