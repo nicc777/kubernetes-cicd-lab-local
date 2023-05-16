@@ -1,0 +1,54 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: index-html-configmap
+data:
+  index.html: |
+    <html>
+      <h3>Awesome Application #1 - Original Version</h3>
+      <hr />
+      <p>Version 1.0.0</p>
+    </html>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: app1
+  replicas: 4
+  template:
+    metadata:
+      labels:
+        app: app1
+    spec:
+      containers:
+      - name: app1
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+          name: app1-http-port
+        volumeMounts:
+        - name: nginx-index-file
+          mountPath: /usr/share/nginx/html/
+      volumes:
+      - name: nginx-index-file
+        configMap:
+          name: index-html-configmap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app1-service
+spec:
+  type: NodePort
+  selector:
+    app: app1
+  ports:
+  - name: app1-service-http-port
+    protocol: TCP
+    port: 7080
+    targetPort: app1-http-port
