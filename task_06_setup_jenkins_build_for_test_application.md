@@ -1,6 +1,7 @@
 
 - [Task Overview and Objectives](#task-overview-and-objectives)
   - [Objective 1 Goals](#objective-1-goals)
+  - [Objective 2 Goals](#objective-2-goals)
 
 
 # Task Overview and Objectives
@@ -39,3 +40,6 @@ In the Helm chart, the `Application` manifest will add the following labels:
 
 Later, we will configure the maintenance pipeline to recalculate the next `suspend-start` and `suspend-end` values when the application comes out of a suspended state.
 
+## Objective 2 Goals
+
+TODO
