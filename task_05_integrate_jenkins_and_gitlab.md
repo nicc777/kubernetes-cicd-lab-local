@@ -1,12 +1,17 @@
 
-- [Jenkins and Gitlab Integration](#jenkins-and-gitlab-integration)
+- [Webhook Integration Test](#webhook-integration-test)
   - [Preparation](#preparation)
   - [Integration Steps](#integration-steps)
-- [Testing and Verification](#testing-and-verification)
+  - [Testing and Verification](#testing-and-verification)
+- [Normal Git Integration for Jenkins to Gitlab](#normal-git-integration-for-jenkins-to-gitlab)
+  - [Create a Jenkins User in Gitlab](#create-a-jenkins-user-in-gitlab)
+  - [Create Git Credentials in Jenkins](#create-git-credentials-in-jenkins)
 - [References](#references)
 
 
-# Jenkins and Gitlab Integration
+# Webhook Integration Test
+
+This section illustrate a webhook integration, but this is optional. The section is intended for those wanting to experiment with webhook based integration.
 
 ## Preparation
 
@@ -45,7 +50,7 @@ Back in Gitlab, opt for adding the Webhook to integrate a project with Jenkins -
 > **Warning**
 > Since we are not using SSL, ensure the `SSL Verification` option is _**not**_ selected.
 
-# Testing and Verification
+## Testing and Verification
 
 Once both sides have been integrated, on Gitlab the webhook can be tested by simulating a PUSH event.
 
@@ -55,6 +60,36 @@ On both Jenkins and Gitlab the event and integration can then be verified:
 
 ![Gitab Status](screenshots/integration_test_webhook_gitlab_view.png)
 
+# Normal Git Integration for Jenkins to Gitlab
+
+This section demonstrates how to integrate Jenkins to Gitlab using normal SSH integration for each Git repository cloning and related tasks. This is required in this lab demonstration where Helm charts will be generated and pushed to the `deployment-maintenance` repository.
+
+## Create a Jenkins User in Gitlab
+
+In Gitlab create a user called `jenkins`, but without a password. Using the administrator account, impersonate this user and add the Jenkins SSH public key.
+
+To get the Jenkins public key, run the following command:
+
+```shell
+docker exec -it jenkins-blueocean cat /var/jenkins_home/.ssh/jenkins_gitlab.pub
+```
+
+## Create Git Credentials in Jenkins
+
+In Jenkins navigate to: `Dashboard > Manage Jenkins > Credentials > System > Global credentials`
+
+Click the `+ Add Credentials` button.
+
+Add a `SSH Username with private key`.
+
+Run the following command to get the private key:
+
+```shell
+docker exec -it jenkins-blueocean cat /var/jenkins_home/.ssh/jenkins_gitlab
+```
+
+The username must be the same as the username created in Gitlab.
+
 # References
 
-* Gitlab Plugin DOcumentation: https://plugins.jenkins.io/gitlab-plugin/
+* Gitlab Plugin Documentation: https://plugins.jenkins.io/gitlab-plugin/

@@ -134,6 +134,13 @@ docker login
 # Generate an SSH key in Jenkins
 docker exec -it jenkins-blueocean ssh-keygen
 
+# Generate an SSH keys for GitLab Integration
+docker exec -it jenkins-blueocean ssh-keygen -f /var/jenkins_home/.ssh/jenkins_gitlab
+
+docker exec -it jenkins-blueocean cat /var/jenkins_home/.ssh/jenkins_gitlab > jenkins_gitlab
+
+docker exec -it jenkins-blueocean cat /var/jenkins_home/.ssh/jenkins_gitlab.pub > jenkins_gitlab.pub
+
 # Prep the build noe
 mkdir /tmp/buildnode
 
@@ -147,6 +154,17 @@ docker exec -it jenkins-blueocean java --version
 #   openjdk 11.0.19 2023-04-18
 #   OpenJDK Runtime Environment Temurin-11.0.19+7 (build 11.0.19+7)
 #   OpenJDK 64-Bit Server VM Temurin-11.0.19+7 (build 11.0.19+7, mixed mode)
+
+# Create SSH config for Gitlab
+cat > config << EOF
+Host gitlab
+    Hostname gitlab
+    Port 8022
+    IdentityFile ~/.ssh/jenkins_gitlab
+    IdentitiesOnly yes
+EOF
+
+ssh-keyscan -p8022 gitlab > known_hosts
 
 # NOTE: The openjdk below must match the openjdk version on jenkins-blueocean (see above)
 cat > Dockerfile << EOF
@@ -164,8 +182,13 @@ RUN apt-get update && \
     echo "jenkins:jenkins" | chpasswd && \
     mkdir /home/jenkins/.m2
 COPY authorized_keys /home/jenkins/.ssh/authorized_keys
+COPY jenkins_gitlab /home/jenkins/.ssh/jenkins_gitlab
+COPY jenkins_gitlab.pub /home/jenkins/.ssh/jenkins_gitlab.pub
+COPY known_hosts /home/jenkins/.ssh/known_hosts
+COPY config /home/jenkins/.ssh/config
 RUN chown -R jenkins:jenkins /home/jenkins/.m2/ && \
     chown -R jenkins:jenkins /home/jenkins/.ssh/
+RUN echo "192.168.2.18    gitlab gitlab.example.tld jenkins jenkins.example.tld" >> /etc/hosts
 EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]
 EOF
