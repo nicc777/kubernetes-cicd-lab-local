@@ -1,0 +1,138 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@1292.v27d8cc3e2602">
+  <actions>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobAction plugin="pipeline-model-definition@2.2131.vb_9788088fdb_5"/>
+    <org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction plugin="pipeline-model-definition@2.2131.vb_9788088fdb_5">
+      <jobProperties/>
+      <triggers/>
+      <parameters/>
+      <options/>
+    </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
+  </actions>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.7.13">
+      <gitLabConnection>gitlab-lab</gitLabConnection>
+      <jobCredentialId></jobCredentialId>
+      <useAlternativeCredential>false</useAlternativeCredential>
+    </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers>
+        <com.dabsquared.gitlabjenkins.GitLabPushTrigger plugin="gitlab-plugin@1.7.13">
+          <spec></spec>
+          <triggerOnPush>false</triggerOnPush>
+          <triggerToBranchDeleteRequest>false</triggerToBranchDeleteRequest>
+          <triggerOnMergeRequest>true</triggerOnMergeRequest>
+          <triggerOnlyIfNewCommitsPushed>false</triggerOnlyIfNewCommitsPushed>
+          <triggerOnPipelineEvent>false</triggerOnPipelineEvent>
+          <triggerOnAcceptedMergeRequest>true</triggerOnAcceptedMergeRequest>
+          <triggerOnClosedMergeRequest>true</triggerOnClosedMergeRequest>
+          <triggerOnApprovedMergeRequest>true</triggerOnApprovedMergeRequest>
+          <triggerOpenMergeRequestOnPush>never</triggerOpenMergeRequestOnPush>
+          <triggerOnNoteRequest>true</triggerOnNoteRequest>
+          <noteRegex>Jenkins please retry a build</noteRegex>
+          <ciSkip>true</ciSkip>
+          <skipWorkInProgressMergeRequest>true</skipWorkInProgressMergeRequest>
+          <labelsThatForcesBuildIfAdded></labelsThatForcesBuildIfAdded>
+          <setBuildDescription>true</setBuildDescription>
+          <branchFilterType>All</branchFilterType>
+          <includeBranchesSpec></includeBranchesSpec>
+          <excludeBranchesSpec></excludeBranchesSpec>
+          <sourceBranchRegex></sourceBranchRegex>
+          <targetBranchRegex></targetBranchRegex>
+          <secretToken>{AQAAABAAAAAwkRIUl3vvKz8nW5dESuUZTCvWd/yeCWW+dQ7r1Pudd+1pKm6ZPyREfcv41SnBh6G/u8wqTaNTq3BHgT3CXRJ5+w==}</secretToken>
+          <pendingBuildName></pendingBuildName>
+          <cancelPendingBuildsOnUpdate>false</cancelPendingBuildsOnUpdate>
+        </com.dabsquared.gitlabjenkins.GitLabPushTrigger>
+      </triggers>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@3659.v582dc37621d8">
+    <script>pipeline {
+    agent { node { label &quot;docker-build-node&quot; }}
+    stages {
+        stage(&apos;checkout-application-branch&apos;) {
+            steps {
+                updateGitlabCommitStatus name: &apos;checkout&apos;, state: &apos;pending&apos;
+                echo &quot;Checkout Application Repo&quot;
+                
+                script {
+                    def whoami = sh (
+                        script: &apos;whoami&apos;,
+                        returnStdout: true
+                    )
+                    echo &quot;whoami: ${whoami}&quot;
+                }
+                
+                script {
+                    def myHome = sh (
+                        script: &apos;echo $HOME&apos;,
+                        returnStdout: true
+                    )
+                    echo &quot;Home Directory: ${myHome}&quot;
+                }
+                
+                script {
+                    def hosts = sh (
+                        script: &apos;cat /etc/hosts&apos;,
+                        returnStdout: true
+                    )
+                    echo &apos;Hosts:&apos;
+                    echo hosts
+                }
+                
+                script {
+                    def sshConfig = sh (
+                        script: &apos;cat /home/jenkins/.ssh/config&apos;,
+                        returnStdout: true
+                    )
+                    echo &apos;SSH Config:&apos;
+                    echo sshConfig
+                }
+                
+                git branch: &apos;main&apos;, credentialsId: &apos;jenkins-gitlab-ssh&apos;, url: &apos;git@gitlab:lab/application-repo-01.git&apos;
+                
+                script {
+                    def listing = sh( 
+                        script: &apos;pwd &amp;&amp; echo &amp;&amp; echo &amp;&amp; ls -lahrt&apos;,
+                        returnStdout: true
+                    )
+                    echo &apos;Listing: &apos;
+                    echo listing    
+                }
+                echo &quot;Checkout CI Repo&quot;
+            }
+        }
+        stage(&apos;generate-helm-charts&apos;) {
+            steps {
+                updateGitlabCommitStatus name: &apos;generate-helm-charts&apos;, state: &apos;running&apos;
+                echo &quot;Generate Helm Charts&quot;
+                
+            }
+        }
+        stage(&apos;commit-helm-charts&apos;) {
+            steps {
+                updateGitlabCommitStatus name: &apos;commit-helm-charts&apos;, state: &apos;running&apos;
+                echo &quot;Commit Helm Charts&quot;
+                /*
+                sshagent (credentials: [&apos;git-ssh-credentials-ID&apos;]) {
+                    sh(&quot;git tag -a some_tag -m &apos;Jenkins&apos;&quot;)
+                    sh(&apos;git push &lt;REPO&gt; --tags&apos;)
+                }
+                */
+            }
+        }
+        stage(&apos;cleanup&apos;) {
+            steps {
+                echo &quot;DONE&quot;
+                updateGitlabCommitStatus name: &apos;build&apos;, state: &apos;success&apos;
+            }
+        }
+    }
+}</script>
+    <sandbox>false</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
