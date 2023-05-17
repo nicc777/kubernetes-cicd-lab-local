@@ -42,4 +42,11 @@ Later, we will configure the maintenance pipeline to recalculate the next `suspe
 
 ## Objective 2 Goals
 
-TODO
+Each application may reach one of two important milestones:
+
+1. Suspend the application (or deploy a previously suspended application)
+2. Delete expired applications
+
+From a pipeline perspective, the picture looks very similar to the previous one, except there is no trigger from Git but rather a schedule for the maintenance pipeline, which will be run at regular intervals from Jenkins.
+
+![Maintenance Pipeline](lab_setup-Maintenance_Pipeline.png)
