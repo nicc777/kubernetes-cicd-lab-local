@@ -45,9 +45,10 @@ From a pipeline perspective, the picture looks very similar to the previous one,
 
 For the pipeline to perform actions on a application deployment, the following labels must be present, which will form part of the Helm chart:
 
-* `expires`: With a Unix timestamp in UTC by which time the application will be deleted from the cluster. Default expiry is 30 minutes after deployment (for LAB testing)
+* `expires`: With a Unix timestamp in UTC by which time the application will be deleted from the cluster. Default expiry is 60 minutes after deployment (for LAB testing)
 * `suspend-start`: with a unix timestamp of when the suspend action will start. Default is to suspend 5 minutes after the initial deployment and the crontab will be calculated therefore relative to the deployment timestamp.
-* `suspend-end`: with a unix timestamp of when the suspend action will stop. The suspend will end 10 minutes before the application is scheduled for deletion, calculated relative to the deployment timestamp
+* `suspend-end`: with a unix timestamp of when the suspend action will stop. For the LAB, a suspend will not last more than 5 minutes
+* `maximum-uptime`: A time unit in seconds between the last `suspend-end` and the next `suspend-start` and for the LAB this period is 10 minutes or 600 seconds.
 
 > **Note**
 > Any time value mentioned above is optimized for LAB conditions and the intervals are relative short. Real world intervals will be much higher.
