@@ -2,6 +2,7 @@
 - [Task Overview and Objectives](#task-overview-and-objectives)
   - [Objective 1 Goals](#objective-1-goals)
   - [Objective 2 Goals](#objective-2-goals)
+- [Interim Step - Connect ArgoCD and Gitlab](#interim-step---connect-argocd-and-gitlab)
 
 
 # Task Overview and Objectives
@@ -53,4 +54,26 @@ For the pipeline to perform actions on a application deployment, the following l
 > **Note**
 > Any time value mentioned above is optimized for LAB conditions and the intervals are relative short. Real world intervals will be much higher.
 
+# Interim Step - Connect ArgoCD and Gitlab
 
+For the deployments to actually work, there needs to be integration between ArgoCD and Gitlab. Fortunately, this is relatively easy.
+
+There are numerous ways to accomplish this and more information is available in [the ArgoCD Documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#repositories) on exactly how to connect to repositories.
+
+In this example, it is assumed there is a user created in Gitlab specifically for ArgoCD. The connection will be over HTTP with authentication.
+
+> **Warning**
+> In a LAB environment it is sometimes useful to not use HTTPS in order to use tools like Wireshark to inspect traffic on the wire. However, this setup is _**extremely**_ insecure and systems in this configuration should ideally be completely isolated in a lab network with tight security controls. Use these steps at your own risk!
+
+> **Note** 
+> For real world usage, SSH is probably the more secure way to integrate.
+
+After a user is created in Gitlab, navigate to the `deployment-maintenance` repository and copy the HTTPS clone url. It may look something like this, depending on your configuration: `http://gitlab:8080/lab/deployment-maintenance.git`
+
+In ArgoCD, add the repository clone url together with the appropriate credentials:
+
+![ArgoCD to Gitlab Repository Configuration](screenshots/argocd_gitlab_integration_setup.png)
+
+After the repository is successfully connected, the following screen should greet you:
+
+![ArgoCD to Gitlab Integration Success](screenshots/argocd_gitlab_integration_done.png)
