@@ -171,7 +171,7 @@ cat > Dockerfile << EOF
 FROM ubuntu:22.04
 RUN apt-get update && \
     apt-get -qy full-upgrade && \
-    apt-get install -qy git && \
+    apt-get install -qy git python3 python3-pip && \
     apt-get install -qy openssh-server && \
     sed -i 's|session    required     pam_loginuid.so|session    optional     pam_loginuid.so|g' /etc/pam.d/sshd && \
     mkdir -p /var/run/sshd && \
