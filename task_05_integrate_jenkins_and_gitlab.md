@@ -93,3 +93,4 @@ The username must be the same as the username created in Gitlab.
 # References
 
 * Gitlab Plugin Documentation: https://plugins.jenkins.io/gitlab-plugin/
+* Gitlab Webhook Documentation: https://docs.gitlab.com/ee/user/project/integrations/webhooks.html
