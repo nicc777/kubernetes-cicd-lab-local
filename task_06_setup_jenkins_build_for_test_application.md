@@ -74,6 +74,9 @@ In ArgoCD, add the repository clone url together with the appropriate credential
 
 ![ArgoCD to Gitlab Repository Configuration](screenshots/argocd_gitlab_integration_setup.png)
 
+> **Note**
+> Follow the same steps to also add the repository `application-repo-01/`
+
 After the repository is successfully connected, the following screen should greet you:
 
 ![ArgoCD to Gitlab Integration Success](screenshots/argocd_gitlab_integration_done.png)
