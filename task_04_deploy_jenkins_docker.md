@@ -188,6 +188,7 @@ COPY known_hosts /home/jenkins/.ssh/known_hosts
 COPY config /home/jenkins/.ssh/config
 RUN chown -R jenkins:jenkins /home/jenkins/.m2/ && \
     chown -R jenkins:jenkins /home/jenkins/.ssh/
+RUN chmod 700 /home/jenkins/.ssh
 RUN chmod 600 /home/jenkins/.ssh/*
 RUN echo "192.168.2.18    gitlab gitlab.example.tld jenkins jenkins.example.tld" >> /etc/hosts
 EXPOSE 22
