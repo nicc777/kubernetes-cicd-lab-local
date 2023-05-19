@@ -182,8 +182,9 @@ RUN apt-get update && \
     echo "jenkins:jenkins" | chpasswd && \
     mkdir /home/jenkins/.m2
 COPY authorized_keys /home/jenkins/.ssh/authorized_keys
-COPY jenkins_gitlab /home/jenkins/.ssh/jenkins_gitlab
-COPY jenkins_gitlab.pub /home/jenkins/.ssh/jenkins_gitlab.pub
+# COPY jenkins_gitlab /home/jenkins/.ssh/jenkins_gitlab
+# COPY jenkins_gitlab.pub /home/jenkins/.ssh/jenkins_gitlab.pub
+RUN su -c "ssh-keygen -q -N '' -f /home/jenkins/.ssh/jenkins_gitlab" jenkins
 COPY known_hosts /home/jenkins/.ssh/known_hosts
 COPY config /home/jenkins/.ssh/config
 RUN chown -R jenkins:jenkins /home/jenkins/.m2/ && \
@@ -202,6 +203,9 @@ export LATEST_IMAGE_ID=`docker image ls | grep jenkins-slave-modified | grep -v 
 docker tag $LATEST_IMAGE_ID $USER/jenkins-slave-modified:latest
 
 docker push $USER/jenkins-slave-modified:latest
+
+# NOTE: Add this key in GitLab for the Jenkins User - required to PUSH to git
+docker run -it --user=jenkins jenkins-slave-modified cat /home/jenkins/.ssh/jenkins_gitlab.pub
 
 cd
 ```
