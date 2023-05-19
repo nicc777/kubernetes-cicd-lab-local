@@ -77,3 +77,31 @@ In ArgoCD, add the repository clone url together with the appropriate credential
 After the repository is successfully connected, the following screen should greet you:
 
 ![ArgoCD to Gitlab Integration Success](screenshots/argocd_gitlab_integration_done.png)
+
+After the Gitlab repository is configured in the ArgoCD, the master application can now be deployed.
+
+There are two options: either use the file `deployment-maintenance/root_application.yaml` from this repository, or use the `deployment-maintenance` project in gitlab, where the `root_application.yaml` file is in the root directory of the project.
+
+Below is an example command, assuming the working directory is the same directory where the file is located:
+
+```shell
+kubectl apply -f root_application.yaml -n argocd
+```
+
+In ArgoCD you should see something like the following: 
+
+![ArgoCD Root Application Deployed](screenshots/argocd_gitlab_root_application_deployed.png)
+
+The root application will monitor for manifests to deploy in the `deployment-maintenance` repository, specifically in the `deployments/lab/application-manifests` directory.
+
+Another way to view the configuration is by issues the following commands on the command line:
+
+```shell
+kubectl get applications -n argocd
+
+kubectl describe application lab-applications -n argocd
+```
+
+The information will be the same as can be seen in ArgoCD:
+
+![ArgoCD Root Application Detail](screenshots/argocd_gitlab_root_application_detail.png)
