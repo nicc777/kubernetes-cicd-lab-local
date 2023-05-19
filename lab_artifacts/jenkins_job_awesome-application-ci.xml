@@ -41,7 +41,7 @@
           <excludeBranchesSpec></excludeBranchesSpec>
           <sourceBranchRegex></sourceBranchRegex>
           <targetBranchRegex></targetBranchRegex>
-          <secretToken>{AQAAABAAAAAwct0mWDLxAIRaWLmbRZXHhYxO1oCOm2YMMKjkKtsbQ1Q3WSH3Wy2hcOt5RAE2o33HeQhCvgo4nzjFNos5GC9a1g==}</secretToken>
+          <secretToken>{AQAAABAAAAAw+3dBy/5rxwjVbBXfu58QPGl5FoUesSc9PPMf324GOKuVkQk8i+wO2RF0woZcuyfJ1N4cTjSRqaAwhnppYsB72g==}</secretToken>
           <pendingBuildName></pendingBuildName>
           <cancelPendingBuildsOnUpdate>false</cancelPendingBuildsOnUpdate>
         </com.dabsquared.gitlabjenkins.GitLabPushTrigger>
@@ -59,7 +59,11 @@ pipeline {
     stages {
         stage(&apos;checkout-application-branch&apos;) {
             steps {
-                updateGitlabCommitStatus name: &apos;checkout&apos;, state: &apos;running&apos;
+                updateGitlabCommitStatus name: &apos;checkout-application-branch&apos;, state: &apos;pending&apos;
+                updateGitlabCommitStatus name: &apos;generate-helm-charts&apos;, state: &apos;pending&apos;
+                updateGitlabCommitStatus name: &apos;commit-helm-charts&apos;, state: &apos;pending&apos;
+                updateGitlabCommitStatus name: &apos;cleanup&apos;, state: &apos;pending&apos;
+                updateGitlabCommitStatus name: &apos;checkout-maintenance-branch&apos;, state: &apos;running&apos;
                 echo &quot;Checkout Application Repo&quot;
 
                 script {
@@ -79,11 +83,34 @@ pipeline {
                 }
                 
                 script {
-                    def pwd = sh( 
+                    def ssh_dir_info = sh( 
+                        script: &apos;ls -lahrt $HOME | grep .ssh &amp;&amp; ls -lahrt $HOME/.ssh/*&apos;,
+                        returnStdout: true
+                    ).trim()
+                    def whoami = sh( 
+                        script: &apos;whoami&apos;,
+                        returnStdout: true
+                    ).trim()
+                    def pwd1 = sh( 
+                        script: &apos;pwd&apos;,
+                        returnStdout: true
+                    ).trim()
+                    echo &quot;Running as user ${whoami} in directory ${pwd1}&quot;
+                    echo &quot;---------------------------------------------------------------------------------&quot;
+                    echo &quot;${ssh_dir_info}&quot;
+                    echo &quot;---------------------------------------------------------------------------------&quot;
+                    
+                    def pwd2 = sh( 
                         script: &apos;mkdir app_dir &amp;&amp; cd app_dir &amp;&amp; pwd&apos;,
                         returnStdout: true
                     ).trim()
-                    REPO_APP_DIR = pwd
+                    REPO_APP_DIR = pwd2
+                    
+                    def pub_key = sh( 
+                        script: &apos;cat /home/jenkins/.ssh/config&apos;,
+                        returnStdout: true
+                    ).trim()
+                    echo &quot;${pub_key}&quot;
                 }
                 
                 dir(REPO_APP_DIR){
@@ -99,8 +126,8 @@ pipeline {
                     ).trim()
                     echo &quot;actual_branch: ${actual_branch}&quot;
                 }
+                updateGitlabCommitStatus name: &apos;checkout-application-branch&apos;, state: &apos;success&apos;
                 
-                echo &quot;Checkout CI Repo&quot;
             }
         }
         stage(&apos;checkout-maintenance-branch&apos;) {
@@ -111,7 +138,7 @@ pipeline {
             }
             steps {
                 echo &quot;Checkout Maintenance Repo&quot;
-
+                updateGitlabCommitStatus name: &apos;checkout-maintenance-branch&apos;, state: &apos;running&apos;
                 script {
                     def pwd = sh( 
                         script: &apos;mkdir maint_repo &amp;&amp; cd maint_repo &amp;&amp; pwd&apos;,
@@ -123,10 +150,19 @@ pipeline {
 
                 dir(REPO_MAINT_DIR){
                     git branch: &apos;main&apos;, credentialsId: &apos;jenkins-gitlab-ssh&apos;, url: &apos;git@gitlab:lab/deployment-maintenance.git&apos;
+                    script {
+                        def config_txt = sh( 
+                            script: &apos;cat .git/config&apos;,
+                            returnStdout: true
+                        ).trim()
+                        
+                        echo &quot;--------------------- git config ---------------------&quot;
+                        echo &quot;${config_txt}&quot;
+                        echo &quot;------------------------------------------------------&quot;
+                    }
                 }
-                
                 echo &quot;Checkout CI Repo&quot;
-                updateGitlabCommitStatus name: &apos;checkout&apos;, state: &apos;success&apos;
+                updateGitlabCommitStatus name: &apos;checkout-maintenance-branch&apos;, state: &apos;success&apos;
             }
         }
         stage(&apos;generate-helm-charts&apos;) {
@@ -151,6 +187,8 @@ pipeline {
                         }
                         updateGitlabCommitStatus name: &apos;generate-helm-charts&apos;, state: &apos;success&apos;
                     } catch (Exception e) {
+                        updateGitlabCommitStatus name: &apos;commit-helm-charts&apos;, state: &apos;canceled&apos;
+                        updateGitlabCommitStatus name: &apos;cleanup&apos;, state: &apos;canceled&apos;
                         updateGitlabCommitStatus name: &apos;generate-helm-charts&apos;, state: &apos;failed&apos;
                         skipRemainingStages = true
                     }       
@@ -166,12 +204,20 @@ pipeline {
             steps {
                 updateGitlabCommitStatus name: &apos;commit-helm-charts&apos;, state: &apos;running&apos;
                 echo &quot;Commit Helm Charts&quot;
-                /*
-                sshagent (credentials: [&apos;git-ssh-credentials-ID&apos;]) {
-                    sh(&quot;git tag -a some_tag -m &apos;Jenkins&apos;&quot;)
-                    sh(&apos;git push &lt;REPO&gt; --tags&apos;)
+                dir(REPO_MAINT_DIR){
+                    sh(
+                        script: &quot;git config --local user.email &apos;jenkins@localhost&apos;&quot;,
+                        returnStdout: false
+                    )
+                    sh(
+                        script: &quot;git config --local user.name &apos;jenkins&apos;&quot;,
+                        returnStdout: false
+                    )
+                    sh( 
+                        script: &quot;eval `ssh-agent` &amp;&amp; ssh-add /home/jenkins/.ssh/jenkins_gitlab &amp;&amp; git add . &amp;&amp; git commit -m &apos;deployment for Jenkins build ${env.BUILD_NUMBER}&apos; &amp;&amp; git push origin main&quot;,
+                        returnStdout: false
+                    )
                 }
-                */
                 updateGitlabCommitStatus name: &apos;commit-helm-charts&apos;, state: &apos;success&apos;
             }
         }
