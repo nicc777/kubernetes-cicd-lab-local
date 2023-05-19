@@ -160,7 +160,7 @@ cat > config << EOF
 Host gitlab
     Hostname gitlab
     Port 8022
-    IdentityFile ~/.ssh/jenkins_gitlab
+    IdentityFile /home/jenkins/.ssh/jenkins_gitlab
     IdentitiesOnly yes
 EOF
 
