@@ -8,13 +8,15 @@ data:
     <html>
       <h3>Awesome Application #1 - Original Version</h3>
       <hr />
-      <p>Version 1.0.0</p>
+      <p>Version {{ .Values.appVersion }}</p>
     </html>
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-deployment
+  labels:
+    appVersion: '{{ .Values.appVersion }}'
 spec:
   selector:
     matchLabels:
@@ -33,7 +35,7 @@ spec:
           name: app1-http-port
         volumeMounts:
         - name: nginx-index-file
-          mountPath: /usr/share/nginx/html/
+          mountPath: /usr/share/nginx/html/{{ .Values.namespace }}
       volumes:
       - name: nginx-index-file
         configMap:
@@ -48,7 +50,7 @@ spec:
   selector:
     app: app1
   ports:
-  - name: app1-service-http-port
+  - name: http-port
     protocol: TCP
     port: 7080
     targetPort: app1-http-port
