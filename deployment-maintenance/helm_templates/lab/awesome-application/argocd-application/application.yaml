@@ -14,14 +14,14 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: __REPO_SOURCE__
+    repoURL: __MAINTENANCE_REPO__
+    path: __TARGET_HELM_DEPLOYMENT_DIRECTORY__
     helm:
       passCredentials: false
       valueFiles:
       - values.yaml
       ignoreMissingValueFiles: false
       skipCrds: true
-      version: v2
   destination:
     server: https://kubernetes.default.svc
     namespace: __NAMESPACE__
@@ -42,6 +42,7 @@ spec:
     - CreateNamespace=true
     - PrunePropagationPolicy=foreground
     - PruneLast=true
+    - Replace=true
     managedNamespaceMetadata:
       labels:
         any: label

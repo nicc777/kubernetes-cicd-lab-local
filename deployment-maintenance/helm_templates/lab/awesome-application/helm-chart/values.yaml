@@ -1,1 +1,2 @@
 namespace: __NAMESPACE__
+appVersion: __APP_VERSION__
