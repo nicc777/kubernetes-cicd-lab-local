@@ -210,6 +210,9 @@ docker run -it --user=jenkins jenkins-slave-modified cat /home/jenkins/.ssh/jenk
 cd
 ```
 
+> **Note**
+> The last docker command is important as you need to create a user in Gitlab for Jenkins and then add this SSH public key to that user. This is what will allow Jenkins to do Git PUSH and other commands. More details for the integration is [in the task](./task_05_integrate_jenkins_and_gitlab.md).
+
 Final Tasks
 
 * Install the Docker plugin
