@@ -3,6 +3,9 @@
   - [Objective 1 Goals](#objective-1-goals)
   - [Objective 2 Goals](#objective-2-goals)
 - [Interim Step - Connect ArgoCD and Gitlab](#interim-step---connect-argocd-and-gitlab)
+- [Triggering Deployments When a Merge Request is Opened](#triggering-deployments-when-a-merge-request-is-opened)
+  - [Scenario](#scenario)
+- [Preparing the Jenkins Pipeline](#preparing-the-jenkins-pipeline)
 
 
 # Task Overview and Objectives
@@ -108,3 +111,23 @@ kubectl describe application lab-applications -n argocd
 The information will be the same as can be seen in ArgoCD:
 
 ![ArgoCD Root Application Detail](screenshots/argocd_gitlab_root_application_detail.png)
+
+# Triggering Deployments When a Merge Request is Opened
+
+## Scenario 
+
+There can be multiple points at which various builds need to be triggered in an automated way. To keep the LAB simple enough to demonstrate the core principles, the LAB environment will only trigger new deployments when a new merge request is created and when a user comments with a specific string in the comments of the merge request to manually invoke another build, possibly after some additional commits to a specific branch was made and assuming a deployment is not required for every push event, which may lead to a lot of deployments that will be generally unused.
+
+# Preparing the Jenkins Pipeline
+
+In Jenkins, create a new pipeline and use the script file [lab_artifacts/pipeline_script_awesome-application-ci.groovy](./lab_artifacts/pipeline_script_awesome-application-ci.groovy).
+
+In general, the following options must be set (screenshots):
+
+![Jenkins Pipeline Config Screen 1](screenshots/pipline_awesome-application-ci_config_01.png)
+
+![Jenkins Pipeline Config Screen 2](screenshots/pipline_awesome-application-ci_config_02.png)
+
+![Jenkins Pipeline Config Screen 3](screenshots/pipline_awesome-application-ci_config_03.png)
+
+![Jenkins Pipeline Config Screen 4](screenshots/pipline_awesome-application-ci_config_04.png)
