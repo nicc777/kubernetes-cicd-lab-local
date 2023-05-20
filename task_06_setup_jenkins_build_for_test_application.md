@@ -9,6 +9,16 @@
   - [Configure the Gitlab Webhook](#configure-the-gitlab-webhook)
   - [Pipeline Expectations](#pipeline-expectations)
   - [An example of a working pipeline](#an-example-of-a-working-pipeline)
+    - [Create a Issue](#create-a-issue)
+    - [Create a Branch](#create-a-branch)
+    - [First Updates](#first-updates)
+    - [Create new Merge Request](#create-new-merge-request)
+    - [Jenkins Build](#jenkins-build)
+    - [Verify Pipeline Status in Gitlab](#verify-pipeline-status-in-gitlab)
+    - [Confirm the Deployment in ArgoCD](#confirm-the-deployment-in-argocd)
+    - [(Optional) Confirm Ingress](#optional-confirm-ingress)
+    - [(Optional) Confirm the Application is Working](#optional-confirm-the-application-is-working)
+    - [View all other Deployments](#view-all-other-deployments)
 
 
 # Task Overview and Objectives
@@ -150,8 +160,78 @@ Similar to creating the test hook, create a hook for the merge requests as indic
 
 ## Pipeline Expectations
 
-TODO
+Referencing back to the diagram at the top of this page, the expectation is as follow:
+
+1. Someone would create a new Issue in Gitlab.
+2. Once the issue is created, a new branch is created from the issue. To keep things simple, the name of the branches have been simplified in the examples to `issue-###`, which also allows for shorted namespace names during deployments.
+3. Updates are made and committed to the new branch.
+4. At some point a Merge (aka Pull Request, in some other popular products) request is created. At this time an initial build should be started on Jenkins with the changes up to that point. The Jenkins build should create the deployment artifacts which ArgoCD will pick-up and deploy
+5. Some more commits may be required as testing in Kubernetes highlights some issues. After these commits, and at some point which is convenient, a message can be put in the Merge Request in the format `Jenkins please retry a build`
+6. Finally, the Merge request is resolved and the merge is done. At this point the LAB assumes some other pipeline will cover the deployments of the main branch.
 
 ## An example of a working pipeline
 
-TODO
+Below is a simple walk through
+
+### Create a Issue
+
+![CI Demo 01](screenshots/ci-pipeline-demo-01.png)
+
+### Create a Branch
+
+![CI Demo 02](screenshots/ci-pipeline-demo-02.png)
+
+> **Note**
+> The branch name, to keep things simple, is in the format `issue-###`
+
+### First Updates
+
+![CI Demo 03](screenshots/ci-pipeline-demo-03.png)
+
+> **Note**
+> Here we demonstarte editing directly in the Gitlab environment. This is only for demonstration purposes.
+
+![CI Demo 04](screenshots/ci-pipeline-demo-04.png)
+
+### Create new Merge Request
+
+![CI Demo 05](screenshots/ci-pipeline-demo-05.png)
+
+![CI Demo 06](screenshots/ci-pipeline-demo-06.png)
+
+![CI Demo 07](screenshots/ci-pipeline-demo-07.png)
+
+> **Note**
+> As soon as the merge request is opened, the details will be sent to Jenkins using the configured web hook
+
+### Jenkins Build
+
+![CI Demo 08](screenshots/ci-pipeline-demo-08.png)
+
+![CI Demo 09](screenshots/ci-pipeline-demo-09.png)
+
+> **Note**
+> This is a LAB environment, so expect a lot of times that things may appear broken - exactly as shown in  the screenshot!
+
+### Verify Pipeline Status in Gitlab
+
+![CI Demo 10](screenshots/ci-pipeline-demo-10.png)
+
+### Confirm the Deployment in ArgoCD 
+
+![CI Demo 11](screenshots/ci-pipeline-demo-11.png)
+
+> **Warning**
+> It may take a couple of minutes for ArgoCD to synchronize. If you are in a hurry, you could also manually force a refresh of the `lab-applications` deployment
+
+### (Optional) Confirm Ingress
+
+![CI Demo 12](screenshots/ci-pipeline-demo-12.png)
+
+### (Optional) Confirm the Application is Working
+
+![CI Demo 13](screenshots/ci-pipeline-demo-13.png)
+
+### View all other Deployments
+
+![CI Demo 14](screenshots/ci-pipeline-demo-14.png)
