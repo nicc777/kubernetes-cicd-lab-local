@@ -7,6 +7,8 @@
   - [Scenario](#scenario)
   - [Preparing the Jenkins Pipeline](#preparing-the-jenkins-pipeline)
   - [Configure the Gitlab Webhook](#configure-the-gitlab-webhook)
+  - [Pipeline Expectations](#pipeline-expectations)
+  - [An example of a working pipeline](#an-example-of-a-working-pipeline)
 
 
 # Task Overview and Objectives
@@ -123,6 +125,11 @@ There can be multiple points at which various builds need to be triggered in an 
 
 In Jenkins, create a new pipeline and use the script file [lab_artifacts/pipeline_script_awesome-application-ci.groovy](./lab_artifacts/pipeline_script_awesome-application-ci.groovy).
 
+The pipeline below was named `awesome-application-ci`. 
+
+> **Note**
+> The concept illustrated in this example and scenario is where Jenkins performs some "_build_" on the `application-repo-01` repository. However, there is not much really to build in reality since the project is a very simple project consisting only of Kubernetes manifests. However, Jenkins will also, as part of the build process, create the deployment artifacts for the LAB environment in the form of Helm charts which will be placed in a deployment directory in the `deployment-maintenance` repository. The actual Helm chart generation is delegated to a Python script run from a shell command in the Jenkins pipeline. The Python script is passed several parameters from the Jenkins pipeline. The Python script can be found in the `deployment-maintenance` repository, which is also in this repository in the file [deployment-maintenance/application_helm_integration.py](./deployment-maintenance/application_helm_integration.py)
+
 In general, the following options must be set (screenshots):
 
 ![Jenkins Pipeline Config Screen 1](screenshots/pipline_awesome-application-ci_config_01.png)
@@ -140,3 +147,11 @@ Similar to creating the test hook, create a hook for the merge requests as indic
 ![Jenkins Pipeline Config Screen 5](screenshots/pipline_awesome-application-ci_config_05.png)
 
 ![Jenkins Pipeline Config Screen 6](screenshots/pipline_awesome-application-ci_config_06.png)
+
+## Pipeline Expectations
+
+TODO
+
+## An example of a working pipeline
+
+TODO
