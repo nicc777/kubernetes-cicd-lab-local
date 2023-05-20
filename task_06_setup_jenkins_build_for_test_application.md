@@ -5,7 +5,8 @@
 - [Interim Step - Connect ArgoCD and Gitlab](#interim-step---connect-argocd-and-gitlab)
 - [Triggering Deployments When a Merge Request is Opened](#triggering-deployments-when-a-merge-request-is-opened)
   - [Scenario](#scenario)
-- [Preparing the Jenkins Pipeline](#preparing-the-jenkins-pipeline)
+  - [Preparing the Jenkins Pipeline](#preparing-the-jenkins-pipeline)
+  - [Configure the Gitlab Webhook](#configure-the-gitlab-webhook)
 
 
 # Task Overview and Objectives
@@ -118,7 +119,7 @@ The information will be the same as can be seen in ArgoCD:
 
 There can be multiple points at which various builds need to be triggered in an automated way. To keep the LAB simple enough to demonstrate the core principles, the LAB environment will only trigger new deployments when a new merge request is created and when a user comments with a specific string in the comments of the merge request to manually invoke another build, possibly after some additional commits to a specific branch was made and assuming a deployment is not required for every push event, which may lead to a lot of deployments that will be generally unused.
 
-# Preparing the Jenkins Pipeline
+## Preparing the Jenkins Pipeline
 
 In Jenkins, create a new pipeline and use the script file [lab_artifacts/pipeline_script_awesome-application-ci.groovy](./lab_artifacts/pipeline_script_awesome-application-ci.groovy).
 
@@ -131,3 +132,11 @@ In general, the following options must be set (screenshots):
 ![Jenkins Pipeline Config Screen 3](screenshots/pipline_awesome-application-ci_config_03.png)
 
 ![Jenkins Pipeline Config Screen 4](screenshots/pipline_awesome-application-ci_config_04.png)
+
+## Configure the Gitlab Webhook
+
+Similar to creating the test hook, create a hook for the merge requests as indicated on the screenshots below:
+
+![Jenkins Pipeline Config Screen 5](screenshots/pipline_awesome-application-ci_config_05.png)
+
+![Jenkins Pipeline Config Screen 6](screenshots/pipline_awesome-application-ci_config_06.png)
