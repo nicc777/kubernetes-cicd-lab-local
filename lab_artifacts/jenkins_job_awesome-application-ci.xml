@@ -27,8 +27,8 @@
           <triggerOnlyIfNewCommitsPushed>false</triggerOnlyIfNewCommitsPushed>
           <triggerOnPipelineEvent>false</triggerOnPipelineEvent>
           <triggerOnAcceptedMergeRequest>true</triggerOnAcceptedMergeRequest>
-          <triggerOnClosedMergeRequest>true</triggerOnClosedMergeRequest>
-          <triggerOnApprovedMergeRequest>true</triggerOnApprovedMergeRequest>
+          <triggerOnClosedMergeRequest>false</triggerOnClosedMergeRequest>
+          <triggerOnApprovedMergeRequest>false</triggerOnApprovedMergeRequest>
           <triggerOpenMergeRequestOnPush>never</triggerOpenMergeRequestOnPush>
           <triggerOnNoteRequest>true</triggerOnNoteRequest>
           <noteRegex>Jenkins please retry a build</noteRegex>
@@ -41,7 +41,7 @@
           <excludeBranchesSpec></excludeBranchesSpec>
           <sourceBranchRegex></sourceBranchRegex>
           <targetBranchRegex></targetBranchRegex>
-          <secretToken>{AQAAABAAAAAw+3dBy/5rxwjVbBXfu58QPGl5FoUesSc9PPMf324GOKuVkQk8i+wO2RF0woZcuyfJ1N4cTjSRqaAwhnppYsB72g==}</secretToken>
+          <secretToken>{AQAAABAAAAAwkYxxgPc2zYAFPNL9xbYm+v34PWayPj+BNmEMLzNGBxUYIPeaSmxnUI0+c7M1+pxlmdYWJkFoMPZwIHfHqzANuA==}</secretToken>
           <pendingBuildName></pendingBuildName>
           <cancelPendingBuildsOnUpdate>false</cancelPendingBuildsOnUpdate>
         </com.dabsquared.gitlabjenkins.GitLabPushTrigger>
@@ -59,13 +59,8 @@ pipeline {
     stages {
         stage(&apos;checkout-application-branch&apos;) {
             steps {
-                updateGitlabCommitStatus name: &apos;checkout-application-branch&apos;, state: &apos;pending&apos;
-                updateGitlabCommitStatus name: &apos;generate-helm-charts&apos;, state: &apos;pending&apos;
-                updateGitlabCommitStatus name: &apos;commit-helm-charts&apos;, state: &apos;pending&apos;
-                updateGitlabCommitStatus name: &apos;cleanup&apos;, state: &apos;pending&apos;
-                updateGitlabCommitStatus name: &apos;checkout-maintenance-branch&apos;, state: &apos;running&apos;
+                updateGitlabCommitStatus name: &apos;pipeline-started&apos;, state: &apos;success&apos;
                 echo &quot;Checkout Application Repo&quot;
-
                 script {
                     // These are variables set by the GitLab Plugin
                     try {
@@ -73,13 +68,20 @@ pipeline {
                              &quot;gitlabSourceBranch      : ${gitlabSourceBranch}\n&quot; +
                              &quot;gitlabSourceRepoName    : ${gitlabSourceRepoName}\n&quot; +
                              &quot;gitlabMergeRequestId    : ${gitlabMergeRequestId}\n&quot; +
-                             &quot;gitlabTargetBranch      : ${gitlabTargetBranch}\n&quot; +
-                             &quot;gitlabTriggerPhrase     : ${gitlabTriggerPhrase}\n&quot;
+                             &quot;gitlabTargetBranch      : ${gitlabTargetBranch}\n&quot;
                         APP_SOURCE_BRANCH = gitlabSourceBranch
                     } catch (Exception e) {
-                        updateGitlabCommitStatus name: &apos;checkout&apos;, state: &apos;failed&apos;
                         skipRemainingStages = true
-                    }   
+                        def sw = new StringWriter()
+                        def pw = new PrintWriter(sw)
+                        e.printStackTrace(pw)
+                        echo sw.toString()
+                    } 
+                    try {
+                        echo &quot;gitlabTriggerPhrase     : ${gitlabTriggerPhrase}\n&quot;
+                    } catch (Exception e) {
+                        echo &quot;Does not seems like this build was triggered by a comment&quot;
+                    } 
                 }
                 
                 script {
@@ -126,8 +128,7 @@ pipeline {
                     ).trim()
                     echo &quot;actual_branch: ${actual_branch}&quot;
                 }
-                updateGitlabCommitStatus name: &apos;checkout-application-branch&apos;, state: &apos;success&apos;
-                
+
             }
         }
         stage(&apos;checkout-maintenance-branch&apos;) {
@@ -138,7 +139,6 @@ pipeline {
             }
             steps {
                 echo &quot;Checkout Maintenance Repo&quot;
-                updateGitlabCommitStatus name: &apos;checkout-maintenance-branch&apos;, state: &apos;running&apos;
                 script {
                     def pwd = sh( 
                         script: &apos;mkdir maint_repo &amp;&amp; cd maint_repo &amp;&amp; pwd&apos;,
@@ -162,7 +162,6 @@ pipeline {
                     }
                 }
                 echo &quot;Checkout CI Repo&quot;
-                updateGitlabCommitStatus name: &apos;checkout-maintenance-branch&apos;, state: &apos;success&apos;
             }
         }
         stage(&apos;generate-helm-charts&apos;) {
@@ -172,7 +171,6 @@ pipeline {
                 }
             }
             steps {
-                updateGitlabCommitStatus name: &apos;generate-helm-charts&apos;, state: &apos;running&apos;
                 echo &quot;Generate Helm Charts&quot;
                 echo &quot;REPO_APP_DIR: ${REPO_APP_DIR}&quot;
                 echo &quot;REPO_MAINT_DIR: ${REPO_MAINT_DIR}&quot;
@@ -185,11 +183,7 @@ pipeline {
                             ).trim()
                             echo &quot;output: ${output}&quot;
                         }
-                        updateGitlabCommitStatus name: &apos;generate-helm-charts&apos;, state: &apos;success&apos;
                     } catch (Exception e) {
-                        updateGitlabCommitStatus name: &apos;commit-helm-charts&apos;, state: &apos;canceled&apos;
-                        updateGitlabCommitStatus name: &apos;cleanup&apos;, state: &apos;canceled&apos;
-                        updateGitlabCommitStatus name: &apos;generate-helm-charts&apos;, state: &apos;failed&apos;
                         skipRemainingStages = true
                     }       
                 }
@@ -202,7 +196,6 @@ pipeline {
                 }
             }
             steps {
-                updateGitlabCommitStatus name: &apos;commit-helm-charts&apos;, state: &apos;running&apos;
                 echo &quot;Commit Helm Charts&quot;
                 dir(REPO_MAINT_DIR){
                     sh(
@@ -218,19 +211,12 @@ pipeline {
                         returnStdout: false
                     )
                 }
-                updateGitlabCommitStatus name: &apos;commit-helm-charts&apos;, state: &apos;success&apos;
             }
         }
         stage(&apos;cleanup&apos;) {
-            when {
-                expression {
-                    !skipRemainingStages
-                }
-            }
             steps {
-                updateGitlabCommitStatus name: &apos;cleanup&apos;, state: &apos;running&apos;
                 echo &quot;DONE&quot;
-                updateGitlabCommitStatus name: &apos;cleanup&apos;, state: &apos;success&apos;
+                updateGitlabCommitStatus name: &apos;build&apos;, state: &apos;success&apos;
             }
         }
     }
