@@ -71,10 +71,16 @@ In Gitlab create a user called `jenkins`, but without a password. Using the admi
 To get the Jenkins public key, run the following command:
 
 ```shell
-docker exec -it jenkins-blueocean cat /var/jenkins_home/.ssh/jenkins_gitlab.pub
+docker run -it --user=jenkins jenkins-slave-modified cat /home/jenkins/.ssh/jenkins_gitlab.pub
 ```
 
+> **Note**
+> The key from the slave will be used, as the slaves will execute the Git commands. The SSH key was created during the [previous step](./task_04_deploy_jenkins_docker.md) when the Jenkins build node master image was created.
+
 ## Create Git Credentials in Jenkins
+
+> **Note**
+> Not to be confused with the previous step, this step is required for the credentials for the Git plugin, which uses keys generated on the Jenkins primary host.
 
 In Jenkins navigate to: `Dashboard > Manage Jenkins > Credentials > System > Global credentials`
 
