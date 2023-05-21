@@ -1,5 +1,5 @@
 environment:
 - name: lab
-  initial-deployment-uptime: 300
-  suspend-duration: 300
-  maximum-uptime: 600
+  initial-deployment-uptime: 900
+  suspend-duration: 900
+  maximum-uptime: 10000

@@ -44,7 +44,7 @@ def print_variable_content(variable_name: str, content: str):
     print('~'*name_len)
 
 
-def get_utc_timestamp(with_decimal: bool=False): # pragma: no cover
+def get_utc_timestamp(with_decimal: bool=False):
     epoch = datetime(1970,1,1,0,0,0)
     now = datetime.utcnow()
     timestamp = (now - epoch).total_seconds()
@@ -230,11 +230,11 @@ def create_deployment_directories(namespace_name: str, target_deployment_dir: st
         application_directory = '{}/deployments/lab/application-manifests/{}'.format(target_deployment_dir, namespace_name)
         helm_deployment_directory = '{}/deployments/lab/helm-manifests/{}'.format(target_deployment_dir, namespace_name)
         helm_deployment_templates_directory = '{}/deployments/lab/helm-manifests/{}/templates'.format(target_deployment_dir, namespace_name)
-        create_directory(path=application_directory)
+        # create_directory(path=application_directory)
         create_directory(path=helm_deployment_directory)
         create_directory(path=helm_deployment_templates_directory)
         print('='*80)
-        print('application_directory               : {}'.format(application_directory))
+        # print('application_directory               : {}'.format(application_directory))
         print('helm_deployment_directory           : {}'.format(helm_deployment_directory))
         print('helm_deployment_templates_directory : {}'.format(helm_deployment_templates_directory))
         print('='*80)
@@ -281,6 +281,7 @@ def main():
     try:
         now = get_utc_timestamp(with_decimal=False)
         build_nr, app_dir, app_branch, maint_dir, deployment_environment, application_name, repo_source, maintenance_repo = parse_args()
+        build_nr_as_str = '{}'.format(build_nr)
         interim_namespace_name = 'app-{}-{}'.format(
             build_final_branch_name(input_branch=app_branch),
             build_nr
@@ -302,7 +303,10 @@ def main():
         variables['__SUSPENDS_ENDS__'] = now + deployment_config['maximum-uptime'] + deployment_config['suspend-duration']
         variables['__MAX_UPTIME__'] = deployment_config['maximum-uptime']
         variables['__BRANCH__'] = app_branch
-        variables['__JENKINS_BUILD_NR__'] = int(build_nr)
+        if build_nr_as_str.lower().startswith('cli') is False:
+            variables['__JENKINS_BUILD_NR__'] = int(build_nr)
+        else:
+            variables['__JENKINS_BUILD_NR__'] = build_nr
         variables['__REPO_SOURCE__'] = repo_source
         variables['__MAINTENANCE_REPO__'] = maintenance_repo
         variables['__APP_VERSION__'] = get_app_version_from_version_file(source_dir=app_dir)
@@ -310,10 +314,21 @@ def main():
         print_variable_content(variable_name='variables', content=json.dumps(variables))
 
         # Write application manifest
-        variable_replacement_and_write_text_file(destination_file='{}/deployments/lab/application-manifests/{}.yaml'.format(maint_dir, namespace_name), file_content=helm_application_deployment_template_data, variables=variables)
+        variable_replacement_and_write_text_file(
+            destination_file='{}/deployments/lab/application-manifests/{}.yaml'.format(maint_dir, namespace_name),
+            file_content=helm_application_deployment_template_data,
+            variables=variables
+        )
 
         # Copy the manifests from the application repository to the Helm templates directory
-        copy_application_manifests_to_deployment_directory(source_directory=app_dir, namespace_name=namespace_name, target_deployment_dir=helm_deployment_templates_directory, variables=variables, recurse_directory=True, only_kubernetes_manifests=True)
+        copy_application_manifests_to_deployment_directory(
+            source_directory=app_dir,
+            namespace_name=namespace_name,
+            target_deployment_dir=helm_deployment_templates_directory,
+            variables=variables,
+            recurse_directory=True,
+            only_kubernetes_manifests=True
+        )
 
         # Copy the HELM Chart and values to the helm deployment target directory
         copy_application_manifests_to_deployment_directory(

@@ -12,7 +12,7 @@ DEPLOYMENT_PATH_PATTERN = [re.compile('\s+path:\s+deployments\/lab\/.*'),]  #   
 LINE_MATCH_REGEX = EXPIRES_PATTERN + DEPLOYMENT_PATH_PATTERN
 
 
-def get_utc_timestamp(with_decimal: bool=False): # pragma: no cover
+def get_utc_timestamp(with_decimal: bool=False):
     epoch = datetime(1970,1,1,0,0,0)
     now = datetime.utcnow()
     timestamp = (now - epoch).total_seconds()
@@ -22,9 +22,9 @@ def get_utc_timestamp(with_decimal: bool=False): # pragma: no cover
 
 
 def parse_args()->tuple:
-    # Expecting: app.py maint-repo-dir
+    # Expecting: app.py maint-repo-dir __MODE__
     args_result = list()
-    if len(sys.argv) == 2:
+    if len(sys.argv) == 3:
         for i, arg in enumerate(sys.argv):
             args_result.append(arg)
             print(f"Argument {i:>6}: {arg}")
@@ -50,7 +50,7 @@ def list_files(directory: str)->list:
         for root, dirs, files in os.walk(directory):
             for file_name in files:
                 if file_name.lower().endswith('.yaml') or file_name.lower().endswith('.yml'):
-                    if file_name.lower().startswith('app-issue-'):
+                    if file_name.lower().startswith('app-issue-') or file_name.lower().startswith('app-test-'):
                         result.append('{}/{}'.format(directory, file_name))
     except:
         traceback.print_exc()
@@ -107,8 +107,11 @@ def delete_directory(dir: str)->bool:
 
 def main():
     # Step 1: Get the Git repo base directory
+    do_git_push = True
     application_manifest_relative_directory = 'deployments/lab/application-manifests'
-    deployment_maintenance_repository_directory = parse_args()[0]
+    deployment_maintenance_repository_directory, mode = parse_args()
+    if mode.lower().startswith('test'):
+        do_git_push = False
 
     # step 2: Get all current deployments in scope
     current_application_deployments = list_files(directory='{}/{}'.format(deployment_maintenance_repository_directory, application_manifest_relative_directory))
@@ -139,7 +142,8 @@ def main():
 
 
     # Step 5: Update Git repo if required
-    if git_updates is True:
+    if do_git_push is True and git_updates is True:
+        print('Pushing changes to Git')
         try:
             with open('/tmp/command.sh', 'w') as f:
                 f.write('git config --local user.email "jenkins@localhost"\n')
@@ -149,6 +153,12 @@ def main():
             print('MAIN BRANCH PUSHED')
         except:
             print('FAILED TO PUSH UPDATES TO GIT')
+    elif do_git_push is False and git_updates is True:
+        print()
+        print("NOTE: There was changes, but changes was not pushed to git as we are in TEST mode")
+        print()
+    else:
+        print("No changes - no need to push to git")
 
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 import sys
 import os
 import traceback
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import copy
 import shutil
 import re
@@ -21,6 +21,7 @@ DEPLOYMENT_PATH_PATTERN = [re.compile('\s+path:\s+deployments\/lab\/.*'),]  #   
 LINE_MATCH_REGEX        = EXPIRES_PATTERN + DEPLOYMENT_PATH_PATTERN + SUSPEND_START_PATTERN + SUSPEND_END_PATTERN
 
 
+
 def get_utc_timestamp(with_decimal: bool=False):
     epoch = datetime(1970,1,1,0,0,0)
     now = datetime.utcnow()
@@ -30,10 +31,13 @@ def get_utc_timestamp(with_decimal: bool=False):
     return int(timestamp)
 
 
+now = get_utc_timestamp(with_decimal=False)
+
+
 def parse_args()->tuple:
-    # Expecting: app.py maint-repo-dir __MODE__
+    # Expecting: app.py maint-repo-dir 
     args_result = list()
-    if len(sys.argv) == 3:
+    if len(sys.argv) == 2:
         for i, arg in enumerate(sys.argv):
             args_result.append(arg)
             print(f"Argument {i:>6}: {arg}")
@@ -55,9 +59,11 @@ def pattern_match(input_str: str, patterns: list)->bool:
 
 def list_files(directory: str)->list:
     result = list()
+    print('list_files(): DIR: {}'.format(directory))
     try:
         for root, dirs, files in os.walk(directory):
             for file_name in files:
+                print('list_files(): Evaluating file "{}"'.format(file_name))
                 if file_name.lower().endswith('.yaml') or file_name.lower().endswith('.yml'):
                     if file_name.lower().startswith('app-issue-') or file_name.lower().startswith('app-test-'):
                         result.append('{}/{}'.format(directory, file_name))
@@ -90,8 +96,15 @@ def delete_directory(dir: str)->bool:
     return True
 
 
+def convert_unix_time_to_time_readable_string(unit_time: int)->str:
+    ts = int('{}'.format(unit_time)) # Make sure it's an int
+    utc = datetime.fromtimestamp(ts)
+    ts_str = datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    return '{}   -> {}'.format(ts, ts_str)
+
+
 def identify_active_application_due_for_suspend(application_deployment_files: list)->dict:
-    now = get_utc_timestamp(with_decimal=False)
+    print("NOW: {}".format(now))
     suspend_application_deployment_files = list()
     suspend_application_deployment_directories = list()
     for file_path in application_deployment_files:
@@ -112,11 +125,11 @@ def identify_active_application_due_for_suspend(application_deployment_files: li
                 label_suspend_start = int(line.split(' ')[-1])
             elif pattern_match(input_str=line, patterns=DEPLOYMENT_PATH_PATTERN) is True:
                 deployment_path = line.split(' ')[-1]
-        print('identify_active_application_due_for_suspend(): NOW           : {}'.format(now))
+        print('identify_active_application_due_for_suspend(): NOW           : {}'.format(convert_unix_time_to_time_readable_string(unit_time=now)))
         print('identify_active_application_due_for_suspend(): FILE          : {}'.format(file_path))
-        print('identify_active_application_due_for_suspend(): EXPIRES AT    : {}'.format(file_expiry_label_value))
-        print('identify_active_application_due_for_suspend(): SUSPEND START : {}'.format(label_suspend_start))
-        print('identify_active_application_due_for_suspend(): SUSPEND END   : {}'.format(label_suspend_end))
+        print('identify_active_application_due_for_suspend(): EXPIRES AT    : {}'.format(convert_unix_time_to_time_readable_string(unit_time=file_expiry_label_value)))
+        print('identify_active_application_due_for_suspend(): SUSPEND START : {}'.format(convert_unix_time_to_time_readable_string(unit_time=label_suspend_start)))
+        print('identify_active_application_due_for_suspend(): SUSPEND END   : {}'.format(convert_unix_time_to_time_readable_string(unit_time=label_suspend_end)))
         if not expired:
             print('identify_active_application_due_for_suspend(): EXPIRED       : FALSE')
             if (now - label_suspend_start) >= 0  and (now - label_suspend_end) < 0:
@@ -132,14 +145,10 @@ def identify_active_application_due_for_suspend(application_deployment_files: li
         if suspend is True:
             suspend_application_deployment_files.append(file_path)
             suspend_application_deployment_directories.append(deployment_path)
-    return {
-        'suspend_application_deployment_files': suspend_application_deployment_files,
-        'suspend_application_deployment_directories': suspend_application_deployment_directories
-    }
 
 
 def identify_suspended_applications_due_for_resurrection(application_deployment_files: list)->dict:
-    now = get_utc_timestamp(with_decimal=False)
+    print("NOW: {}".format(now))
     suspend_application_deployment_files = list()
     suspend_application_deployment_directories = list()
     for file_path in application_deployment_files:
@@ -160,96 +169,32 @@ def identify_suspended_applications_due_for_resurrection(application_deployment_
                 label_suspend_end = int(line.split(' ')[-1])
             elif pattern_match(input_str=line, patterns=DEPLOYMENT_PATH_PATTERN) is True:
                 deployment_path = line.split(' ')[-1]
+        print('identify_suspended_applications_due_for_resurrection(): NOW           : {}'.format(now))
+        print('identify_suspended_applications_due_for_resurrection(): FILE          : {}'.format(file_path))
+        print('identify_suspended_applications_due_for_resurrection(): EXPIRES AT    : {}'.format(file_expiry_label_value))
+        print('identify_suspended_applications_due_for_resurrection(): SUSPEND START : {}'.format(label_suspend_start))
+        print('identify_suspended_applications_due_for_resurrection(): SUSPEND END   : {}'.format(label_suspend_end))
         if not expired:
             if label_suspend_start < now and label_suspend_end > now:   # SHould we be in a suspended state now?
                 suspend = True
         if suspend is True:
             suspend_application_deployment_files.append(file_path)
             suspend_application_deployment_directories.append(deployment_path)
-    return {
-        'suspend_application_deployment_files': suspend_application_deployment_files,
-        'suspend_application_deployment_directories': suspend_application_deployment_directories
-    }
 
 
 def main():
     # Step 1: Get the Git repo base directory
-    do_git_push = True
     application_manifest_relative_directory = 'deployments/lab/application-manifests'
     suspend_application_manifest_path = 'suspend/lab/application-manifests'
-    suspend_application_deployments_templates_path = 'suspend/lab/helm-manifests'
-    deployment_maintenance_repository_directory, mode = parse_args()
-    if mode.lower().startswith('test'):
-        do_git_push = False
+    deployment_maintenance_repository_directory = parse_args()[0]
 
     # step 2: Get all current active and suspended deployments in scope
     active_application_deployments = list_files(directory='{}/{}'.format(deployment_maintenance_repository_directory, application_manifest_relative_directory))
     suspended_application_deployments = list_files(directory='{}/{}'.format(deployment_maintenance_repository_directory, suspend_application_manifest_path))
 
     # Step 3: Identify deployments ready for suspend and resurrection actions
-    active_applications_due_for_suspension = identify_active_application_due_for_suspend(application_deployment_files=active_application_deployments)
-    suspended_applications_due_for_resurrection = identify_suspended_applications_due_for_resurrection(application_deployment_files=suspended_application_deployments)
-
-    # Step 4: Move active applications due for suspension
-    git_updates = False
-    #for expired_application_deployment_file, expired_application_deployment_directory in expired_application_deployment_files.items():
-    for application_deployment_file in active_applications_due_for_suspension['suspend_application_deployment_files']:        
-        try:
-            print('Suspend FILE          : {}'.format(application_deployment_file))
-            # os.unlink(application_deployment_file)
-            git_updates = True
-        except:
-            pass
-
-    for expired_application_deployment_directory in active_applications_due_for_suspension['suspend_application_deployment_directories']:        
-        try:
-            deployment_directory = '{}/{}'.format(deployment_maintenance_repository_directory, expired_application_deployment_directory)
-            deployment_directory = ''.join(deployment_directory.split())
-            print('Suspend DIRECTORY     : {}'.format(deployment_directory))
-            # delete_directory(dir=deployment_directory)
-            git_updates = True
-        except:
-            pass
-
-    # Step 4: Move suspended applications due for resurrection
-    git_updates = False
-    #for expired_application_deployment_file, expired_application_deployment_directory in expired_application_deployment_files.items():
-    for application_deployment_file in suspended_applications_due_for_resurrection['suspend_application_deployment_files']:        
-        try:
-            print('Resurrect FILE        : {}'.format(deployment_directory))
-            # os.unlink(application_deployment_file)
-            git_updates = True
-        except:
-            pass
-
-    for expired_application_deployment_directory in suspended_applications_due_for_resurrection['suspend_application_deployment_directories']:        
-        try:
-            deployment_directory = '{}/{}'.format(deployment_maintenance_repository_directory, expired_application_deployment_directory)
-            deployment_directory = ''.join(deployment_directory.split())
-            print('Resurrect DIRECTORY   : {}'.format(deployment_directory))
-            # delete_directory(dir=deployment_directory)
-            git_updates = True
-        except:
-            pass
-
-    # PUSH Changes to GIT
-    if do_git_push is True and git_updates is True:
-        print('Pushing changes to Git')
-        try:
-            with open('/tmp/command.sh', 'w') as f:
-                f.write('git config --local user.email "jenkins@localhost"\n')
-                f.write('git config --local user.name "jenkins"\n')
-                f.write('eval `ssh-agent` && ssh-add /home/jenkins/.ssh/jenkins_gitlab && git add . && git commit -m "Deleted Expired Applications" && git push origin main\n')
-            # os.system('cd {} && /bin/bash /tmp/command.sh'.format(deployment_maintenance_repository_directory))
-            print('MAIN BRANCH PUSHED')
-        except:
-            print('FAILED TO PUSH UPDATES TO GIT')
-    elif do_git_push is False and git_updates is True:
-        print()
-        print("NOTE: There was changes, but changes was not pushed to git as we are in TEST mode")
-        print()
-    else:
-        print("No changes - no need to push to git")
+    identify_active_application_due_for_suspend(application_deployment_files=active_application_deployments)
+    identify_suspended_applications_due_for_resurrection(application_deployment_files=suspended_application_deployments)
 
 
 if __name__ == '__main__':
