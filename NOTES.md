@@ -58,7 +58,7 @@ git clone git@gitlab:lab/deployment-maintenance.git
 
 cd deployment-maintenance
 
-export TEST_NR="1"
+export TEST_NR="`date +%s`"
 
 python3 "application_helm_integration.py"                             \
     "cli-test-${TEST_NR}"                                             \
