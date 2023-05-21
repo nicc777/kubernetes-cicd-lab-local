@@ -70,3 +70,49 @@ python3 "application_helm_integration.py"                             \
     "http://gitlab:8080/lab/application-repo-01.git"                  \
     "http://gitlab:8080/lab/deployment-maintenance.git"
 ```
+
+There will be some output generated from the script - mostly for debug and troubleshooting purposes. However, the following can also be done to inspect the result.
+
+First, run:
+
+```shell
+tree deployments/lab
+```
+
+And now inspect the output (our output may be different):
+
+```text
+# output of the command : tree deployments/lab
+
+deployments/lab
+├── application-manifests
+│   ├── app-issue-11-113.yaml
+│   ├── app-test-1-cli-test-1.yaml
+│   └── README.md
+└── helm-manifests
+├── app-issue-11-113
+│   ├── Chart.yaml
+│   ├── templates
+│   │   ├── awesome_webpage.yaml
+│   │   └── ingress.yaml
+│   └── values.yaml
+├── app-test-1-cli-test-1
+│   ├── Chart.yaml
+│   ├── templates
+│   │   ├── awesome_webpage.yaml
+│   │   └── ingress.yaml
+│   └── values.yaml
+└── README.md
+```
+
+In the above output, `app-issue-11-113` directory and files refers to an _actual_ deployment, where the `app-test-1-cli-test-1` directory and files refers to the test run.
+
+To reset the test directories, simply run:
+
+```shell
+cd /tmp
+
+rm -frR /tmp/script-tests
+
+# No run the previous commands again...
+```
