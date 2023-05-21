@@ -19,6 +19,9 @@
     - [(Optional) Confirm Ingress](#optional-confirm-ingress)
     - [(Optional) Confirm the Application is Working](#optional-confirm-the-application-is-working)
     - [View all other Deployments](#view-all-other-deployments)
+- [Deployment Management Pipelines](#deployment-management-pipelines)
+  - [The `awesome-application-suspend-management` pipeline](#the-awesome-application-suspend-management-pipeline)
+  - [The `awesome-application-delete-expired` pipeline](#the-awesome-application-delete-expired-pipeline)
 
 
 # Task Overview and Objectives
@@ -235,3 +238,38 @@ Below is a simple walk through
 ### View all other Deployments
 
 ![CI Demo 14](screenshots/ci-pipeline-demo-14.png)
+
+# Deployment Management Pipelines
+
+Two additional pipelines is provided in this LAB:
+
+1. A `awesome-application-suspend-management` pipeline to manage when applications must go into a suspend state.
+2. A `awesome-application-delete-expired` pipeline for deleting expired deployments.
+
+The `awesome-application-delete-expired` pipeline will be configured to trigger after a successful run of the `awesome-application-suspend-management` pipeline. This logic may differ depending on circumstances. Also not that the `awesome-application-suspend-management` pipeline implements both the "putting into suspend state" and "bringing out of suspend state" logic and this could potentially be split into two separate pipelines, again depending on your needs.
+
+## The `awesome-application-suspend-management` pipeline
+
+Configure the pipeline using the following example screenshots:
+
+![Suspend Pipeline 1](screenshots/suspend-management-pipeline-01.png)
+
+![Suspend Pipeline 2](screenshots/suspend-management-pipeline-02.png)
+
+![Suspend Pipeline 3](screenshots/suspend-management-pipeline-03.png)
+
+> **Note**
+> The pipeline script can be found in the local file [`deployment-maintenance/application_suspend.py`](./deployment-maintenance/application_suspend.py)
+
+## The `awesome-application-delete-expired` pipeline
+
+Configure the pipeline using the following example screenshots:
+
+![Suspend Pipeline 1](screenshots/suspend-management-pipeline-01.png)
+
+![Suspend Pipeline 2](screenshots/suspend-management-pipeline-02.png)
+
+![Suspend Pipeline 3](screenshots/suspend-management-pipeline-03.png)
+
+> **Note**
+> The pipeline script can be found in the local file [`deployment-maintenance/application_cleanup.py`](./deployment-maintenance/application_cleanup.py)
