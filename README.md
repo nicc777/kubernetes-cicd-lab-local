@@ -78,8 +78,8 @@ Below is a list of objectives of the LAB. Each checked item means the task is mo
 * [x] Create initial Gitlab repositories
 * [x] Link Jenkins and Gitlab and perform first builds
 * [x] Link ArgoCD to Gitlab for first deployments
-* [ ] Perform some common operational procedures:
-  * [ ] Update a project and subsequent deployment
+* [x] Perform some common operational procedures:
+  * [x] Update a project and subsequent deployment
   * [ ] Add a suspend feature to remove deployments temporarily or permanently based on configuration
   * [x] Delete expired deployments
 

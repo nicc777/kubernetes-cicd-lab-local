@@ -312,4 +312,3 @@ Given the following configuration as in the example, a good strategy for testing
 
 > **Note**
 > Take note of some of the authors own observations in the local file [NOTES.md](./NOTES.md)
-> 
