@@ -48,6 +48,10 @@ Since the python scripts essentially only create, move and delete files on the l
 In the `awesome-application-ci` pipeline, the commit for new application deployments are done in the Jenkins pipeline script, therefore creating new application deployments in the `application_helm_integration.py` script does not actually push changes to git. This script can therefore be tested unchanged with some hand crafted command line arguments for example:
 
 ```shell
+cd /tmp
+
+rm -frR /tmp/script-tests
+
 mkdir /tmp/script-tests
 
 cd /tmp/script-tests
