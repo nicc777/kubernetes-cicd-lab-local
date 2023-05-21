@@ -22,6 +22,8 @@
 - [Deployment Management Pipelines](#deployment-management-pipelines)
   - [The `awesome-application-suspend-management` pipeline](#the-awesome-application-suspend-management-pipeline)
   - [The `awesome-application-delete-expired` pipeline](#the-awesome-application-delete-expired-pipeline)
+- [Pipeline Executions](#pipeline-executions)
+  - [Guidance for testing](#guidance-for-testing)
 
 
 # Task Overview and Objectives
@@ -259,7 +261,7 @@ Configure the pipeline using the following example screenshots:
 ![Suspend Pipeline 3](screenshots/suspend-management-pipeline-03.png)
 
 > **Note**
-> The pipeline script can be found in the local file [`deployment-maintenance/application_suspend.py`](./deployment-maintenance/application_suspend.py)
+> The pipeline script can be found in the local file [`deployment-maintenance/application_suspend.py`](./deployment-maintenance/application_suspend.py). This file is also in the `deployment-maintenance` repository
 
 ## The `awesome-application-delete-expired` pipeline
 
@@ -272,4 +274,42 @@ Configure the pipeline using the following example screenshots:
 ![Suspend Pipeline 3](screenshots/suspend-management-pipeline-03.png)
 
 > **Note**
-> The pipeline script can be found in the local file [`deployment-maintenance/application_cleanup.py`](./deployment-maintenance/application_cleanup.py)
+> The pipeline script can be found in the local file [`deployment-maintenance/application_cleanup.py`](./deployment-maintenance/application_cleanup.py). This file is also in the `deployment-maintenance` repository
+
+# Pipeline Executions
+
+Each time the `awesome-application-suspend-management` pipline  runs successfully, the `awesome-application-delete-expired` pipeline should run next.
+
+The timing of the suspend and expires operations is configured in the local file [`deployment-maintenance/configs/application-suspend.yaml`](./deployment-maintenance/configs/application-suspend.yaml)
+
+> **Note**
+> This file is also in the `deployment-maintenance` repository and to effect the running config, the file in Gitlab should be edited.
+
+Below is an example of the file:
+
+```yaml
+environment:
+- name: lab
+  initial-deployment-uptime: 900
+  suspend-duration: 900
+  maximum-uptime: 10000
+```
+
+What does it mean:
+
+| Field Name                  | Meaning                                                                                                                                                                |
+|-----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `initial-deployment-uptime` | Used to calculate the initial suspend timestamp. Basically "now" plus this value gives the timestamp value of the `suspend-start` label in the `Application` manifest. |
+| `suspend-duration`          | Used to calculate the value of the `suspend-end` value, relative to the `suspend-start` label value (`suspend-start` plus `suspend-duration`)                          |
+| `maximum-uptime`            | Used to calculate the final expiry time that will populate the `expires` label value. ("now" plus `maximum-uptime`)                                                    |
+
+> **Warning**
+> Prevent the timestamp values to have too small values as the sync time of ArgoCD also needs to be taken into consideration. For the `initial-deployment-uptime` and `suspend-duration` a minimum value of 900 is probably a good guide and for `maximum-uptime` the minimum value should probably be `initial-deployment-uptime` plus `suspend-duration` plus some value smaller than the difference between `initial-deployment-uptime` and `suspend-duration`.
+
+## Guidance for testing
+
+Given the following configuration as in the example, a good strategy for testing would be to create one or more merge requests and then force a manual deployment with the `Jenkins please retry a build` comment in the merge request(s). A good interval between manual build would be around 5 minutes, until you have about 20 to 30 builds made. Do this while observing the deployments in ArgoCD. You should see deployments come and go. A good observation would also be the directory `suspend/lab` in the `deployment-maintenance` repository.
+
+> **Note**
+> Take note of some of the authors own observations in the local file [NOTES.md](./NOTES.md)
+> 
