@@ -69,6 +69,14 @@ python3 "application_helm_integration.py"                             \
     "awesome-application"                                             \
     "http://gitlab:8080/lab/application-repo-01.git"                  \
     "http://gitlab:8080/lab/deployment-maintenance.git"
+
+python3 "application_cleanup.py"                \
+    "/tmp/script-tests/deployment-maintenance"  \
+    "TEST"
+
+python3 "application_cleanup.py"                \
+     "/tmp/script-tests/deployment-maintenance" \
+     "TEST"
 ```
 
 There will be some output generated from the script - mostly for debug and troubleshooting purposes. However, the following can also be done to inspect the result.
