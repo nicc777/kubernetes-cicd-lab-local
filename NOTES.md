@@ -4,6 +4,7 @@
   - [Namespaces are not deleted](#namespaces-are-not-deleted)
 - [Other Ideas and Thoughts](#other-ideas-and-thoughts)
   - [Suspend Logic](#suspend-logic)
+- [Strategy for Testing](#strategy-for-testing)
 
 
 # Observations during development and testing
@@ -35,3 +36,37 @@ Real world logic would probably have to be adjusted to take into considerations 
 
 > **Note**
 > About timezones, ensure that timezones and how it influences your logic and your team is well understood. As a guideline, consider using only UTC timestamps and all "time" is relative to UTC. Remember teams or team members in different time zones and also consider where the workload is physically deployed in terms of it's timezone.
+
+# Strategy for Testing
+
+The Python functions in the `deployment-maintenance` repository does the heavy lifting and can therefore be easily adapted for offline testing.
+
+In terms of "offline" it really implies "without committing changes to the `deployment-maintenance` repository.
+
+Since the python scripts essentially only create, move and delete files on the local file system, they can easily be manually run and tested to see the effects on the local file system without affecting the running cluster. 
+
+In the `awesome-application-ci` pipeline, the commit for new application deployments are done in the Jenkins pipeline script, therefore creating new application deployments in the `application_helm_integration.py` script does not actually push changes to git. This script can therefore be tested unchanged with some hand crafted command line arguments for example:
+
+```shell
+mkdir /tmp/script-tests
+
+cd /tmp/script-tests
+
+git clone git@gitlab:lab/application-repo-01.git 
+
+git clone git@gitlab:lab/deployment-maintenance.git 
+
+cd deployment-maintenance
+
+export TEST_NR="1"
+
+python3 "application_helm_integration.py"                             \
+    "cli-test-${TEST_NR}"                                             \
+    "/tmp/script-tests/application-repo-01"                           \
+    "test-${TEST_NR}"                                                 \
+    "/tmp/script-tests/deployment-maintenance"                        \
+    "lab"                                                             \
+    "awesome-application"                                             \
+    "http://gitlab:8080/lab/application-repo-01.git"                  \
+    "http://gitlab:8080/lab/deployment-maintenance.git"
+```

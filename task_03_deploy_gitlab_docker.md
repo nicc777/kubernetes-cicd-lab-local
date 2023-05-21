@@ -192,6 +192,7 @@ git clone https://github.com/nicc777/kubernetes-cicd-lab-local.git
 # Add the following public key to your GitLab account
 cat .ssh/gitlab_local_docker.pub 
 
+# After the SSH key is added, run the following commands:
 git clone git@gitlab:lab/application-repo-01.git 
 
 git clone git@gitlab:lab/deployment-maintenance.git 
