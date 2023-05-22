@@ -35,6 +35,12 @@ def _dir_walk_level(some_dir, level=1):
             del dirs[:]
 
 
+def convert_unix_time_to_time_readable_string(unit_time: int)->str:
+    ts = int('{}'.format(unit_time)) # Make sure it's an int
+    ts_str = datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    return '{}   -> {}'.format(ts, ts_str)
+
+
 def print_variable_content(variable_name: str, content: str):
     name_len = len(variable_name) + 12
     print('-'*name_len)
@@ -300,7 +306,7 @@ def main():
         variables['__NAMESPACE__'] = namespace_name
         variables['__EXPIRES__'] = now + deployment_config['maximum-uptime']
         variables['__SUSPEND_STARTS__'] = now + deployment_config['initial-deployment-uptime']
-        variables['__SUSPENDS_ENDS__'] = now + deployment_config['maximum-uptime'] + deployment_config['suspend-duration']
+        variables['__SUSPENDS_ENDS__'] = variables['__SUSPEND_STARTS__'] + deployment_config['suspend-duration']
         variables['__MAX_UPTIME__'] = deployment_config['maximum-uptime']
         variables['__BRANCH__'] = app_branch
         if build_nr_as_str.lower().startswith('cli') is False:
@@ -312,6 +318,11 @@ def main():
         variables['__APP_VERSION__'] = get_app_version_from_version_file(source_dir=app_dir)
         variables['__TARGET_HELM_DEPLOYMENT_DIRECTORY__'] = 'deployments/{}/helm-manifests/{}'.format(deployment_environment, namespace_name)
         print_variable_content(variable_name='variables', content=json.dumps(variables))
+
+        print('NOW           : {}'.format( convert_unix_time_to_time_readable_string(unit_time=now                             ) ) )
+        print('EXPIRES AT    : {}'.format( convert_unix_time_to_time_readable_string(unit_time=variables['__EXPIRES__']        ) ) )
+        print('SUSPEND START : {}'.format( convert_unix_time_to_time_readable_string(unit_time=variables['__SUSPEND_STARTS__'] ) ) )
+        print('SUSPEND END   : {}'.format( convert_unix_time_to_time_readable_string(unit_time=variables['__SUSPENDS_ENDS__']  ) ) )
 
         # Write application manifest
         variable_replacement_and_write_text_file(

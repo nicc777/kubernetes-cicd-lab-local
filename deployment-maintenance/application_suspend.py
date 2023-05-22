@@ -30,6 +30,12 @@ def get_utc_timestamp(with_decimal: bool=False):
     return int(timestamp)
 
 
+def convert_unix_time_to_time_readable_string(unit_time: int)->str:
+    ts = int('{}'.format(unit_time)) # Make sure it's an int
+    ts_str = datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    return '{}   -> {}'.format(ts, ts_str)
+
+
 def parse_args()->tuple:
     # Expecting: app.py maint-repo-dir __MODE__
     args_result = list()
@@ -112,11 +118,13 @@ def identify_active_application_due_for_suspend(application_deployment_files: li
                 label_suspend_start = int(line.split(' ')[-1])
             elif pattern_match(input_str=line, patterns=DEPLOYMENT_PATH_PATTERN) is True:
                 deployment_path = line.split(' ')[-1]
-        print('identify_active_application_due_for_suspend(): NOW           : {}'.format(now))
+
+        print('identify_active_application_due_for_suspend(): NOW           : {}'.format(convert_unix_time_to_time_readable_string(unit_time=now)))
         print('identify_active_application_due_for_suspend(): FILE          : {}'.format(file_path))
-        print('identify_active_application_due_for_suspend(): EXPIRES AT    : {}'.format(file_expiry_label_value))
-        print('identify_active_application_due_for_suspend(): SUSPEND START : {}'.format(label_suspend_start))
-        print('identify_active_application_due_for_suspend(): SUSPEND END   : {}'.format(label_suspend_end))
+        print('identify_active_application_due_for_suspend(): EXPIRES AT    : {}'.format(convert_unix_time_to_time_readable_string(unit_time=file_expiry_label_value)))
+        print('identify_active_application_due_for_suspend(): SUSPEND START : {}'.format(convert_unix_time_to_time_readable_string(unit_time=label_suspend_start)))
+        print('identify_active_application_due_for_suspend(): SUSPEND END   : {}'.format(convert_unix_time_to_time_readable_string(unit_time=label_suspend_end)))
+
         if not expired:
             print('identify_active_application_due_for_suspend(): EXPIRED       : FALSE')
             if (now - label_suspend_start) >= 0  and (now - label_suspend_end) < 0:
@@ -160,6 +168,13 @@ def identify_suspended_applications_due_for_resurrection(application_deployment_
                 label_suspend_end = int(line.split(' ')[-1])
             elif pattern_match(input_str=line, patterns=DEPLOYMENT_PATH_PATTERN) is True:
                 deployment_path = line.split(' ')[-1]
+
+        print('identify_suspended_applications_due_for_resurrection(): NOW           : {}'.format(convert_unix_time_to_time_readable_string(unit_time=now)))
+        print('identify_suspended_applications_due_for_resurrection(): FILE          : {}'.format(file_path))
+        print('identify_suspended_applications_due_for_resurrection(): EXPIRES AT    : {}'.format(convert_unix_time_to_time_readable_string(unit_time=file_expiry_label_value)))
+        print('identify_suspended_applications_due_for_resurrection(): SUSPEND START : {}'.format(convert_unix_time_to_time_readable_string(unit_time=label_suspend_start)))
+        print('identify_suspended_applications_due_for_resurrection(): SUSPEND END   : {}'.format(convert_unix_time_to_time_readable_string(unit_time=label_suspend_end)))
+
         if not expired:
             if label_suspend_start < now and label_suspend_end > now:   # SHould we be in a suspended state now?
                 suspend = True

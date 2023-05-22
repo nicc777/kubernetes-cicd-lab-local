@@ -98,7 +98,6 @@ def delete_directory(dir: str)->bool:
 
 def convert_unix_time_to_time_readable_string(unit_time: int)->str:
     ts = int('{}'.format(unit_time)) # Make sure it's an int
-    utc = datetime.fromtimestamp(ts)
     ts_str = datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
     return '{}   -> {}'.format(ts, ts_str)
 
