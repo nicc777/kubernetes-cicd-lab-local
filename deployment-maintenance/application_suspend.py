@@ -6,14 +6,13 @@ import copy
 import shutil
 import re
 
-"""
-labels:
-    name: awesome-application
-    expires: __EXPIRES__
-    suspend-start: __SUSPEND_STARTS__
-    suspend-end: __SUSPENDS_ENDS__
-    maximum-uptime: __MAX_UPTIME__
-"""                                                                         # EXAMPLES:
+import yaml
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
+
+
 EXPIRES_PATTERN         = [re.compile('\s+expires:\s+\d+'),]                #   expires: 1234567890
 SUSPEND_START_PATTERN   = [re.compile('\s+suspend\-start:\s+\d+'),]         #   suspend-start: 1234567890
 SUSPEND_END_PATTERN     = [re.compile('\s+suspend\-end:\s+\d+'),]           #   suspend-end: 1234567890
@@ -34,6 +33,24 @@ def convert_unix_time_to_time_readable_string(unit_time: int)->str:
     ts = int('{}'.format(unit_time)) # Make sure it's an int
     ts_str = datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
     return '{}   -> {}'.format(ts, ts_str)
+
+
+def read_suspend_configuration(deployment_environment: str='lab')->dict:
+    config = dict()
+    try:
+        yaml_data = read_text_file(path_to_file='configs/application-suspend.yaml')
+        for data in yaml.load_all(yaml_data, Loader=Loader):
+            if 'environment' in data:
+                if isinstance(data['environment'], list):
+                    for environment_data in  data['environment']:
+                        if environment_data['name'] == deployment_environment:
+                            config['initial-deployment-uptime'] = environment_data['initial-deployment-uptime']
+                            config['suspend-duration'] = environment_data['suspend-duration']
+                            config['maximum-uptime'] = environment_data['maximum-uptime']
+    except: 
+        traceback.print_exc()
+        sys.exit(127)
+    return config
 
 
 def parse_args()->tuple:
@@ -73,13 +90,18 @@ def list_files(directory: str)->list:
     return copy.deepcopy(result)
 
 
-def read_text_file(path_to_file: str)->list:
+def read_text_file(path_to_file: str, read_lines_that_match_this_regex: list=LINE_MATCH_REGEX)->list:
     content = list()
     with open(path_to_file, 'r') as f:
         for line in f:
-            # We are only interested really in a couple of lines in these files
-            if pattern_match(input_str=line, patterns=LINE_MATCH_REGEX) is True:
-                print('* Matching line: {}'.format(line))
+            read_line = True
+            if read_lines_that_match_this_regex is not None: # We are only interested really in a couple of lines in these files
+                if isinstance(read_lines_that_match_this_regex, list):
+                    if pattern_match(input_str=line, patterns=LINE_MATCH_REGEX) is True: 
+                        print('* Matching line: {}'.format(line))
+                        content.append(line)
+                        read_line = False
+            if read_line is True:
                 content.append(line)
     return content
 
@@ -195,6 +217,49 @@ def identify_suspended_applications_due_for_resurrection(application_deployment_
     }
 
 
+def update_application_manifest_timestamp_labels(file_path: str):
+    config = read_suspend_configuration()
+    """
+        config['initial-deployment-uptime']
+        config['suspend-duration']
+        config['maximum-uptime']
+    """
+
+    application_manifest_content_lines = read_text_file(path_to_file=file_path, read_lines_that_match_this_regex=None)
+    application_manifest_labels = read_text_file(path_to_file=file_path)
+
+    updated_suspend_start = 0
+    updated_suspend_end = 0
+    expires = 0
+    for line in application_manifest_labels:
+            if pattern_match(input_str=line, patterns=SUSPEND_END_PATTERN) is True:
+                current_suspend_end = int(line.split(' ')[-1])
+            elif pattern_match(input_str=line, patterns=EXPIRES_PATTERN) is True:
+                expires = int(line.split(' ')[-1])
+
+    updated_suspend_start = current_suspend_end + config['initial-deployment-uptime']
+    updated_suspend_end = updated_suspend_start + config['suspend-duration']
+    
+    
+    if updated_suspend_start > expires: # No need to suspend again
+        updated_suspend_start = 9999999999
+        updated_suspend_end   = 9999999999
+
+    new_suspend_start_str = '    suspend-start: {}'.format(updated_suspend_start)
+    new_suspend_end_str   = '    suspend-end: {}'.format(updated_suspend_end)
+
+    application_manifest_content = ''
+    for line in application_manifest_content_lines:
+        if '    suspend-start:' in line:
+            application_manifest_content = '{}{}\n'.format(application_manifest_content, new_suspend_start_str)
+        elif '    suspend-end:' in line:
+            application_manifest_content = '{}{}\n'.format(application_manifest_content, new_suspend_end_str)
+        else:
+            application_manifest_content = '{}{}\n'.format(application_manifest_content, line)
+    with open(file_path, 'w') as f:
+        f.write(application_manifest_content)
+        
+
 def main():
     # Step 1: Get the Git repo base directory
     do_git_push = True
@@ -227,27 +292,14 @@ def main():
             traceback.print_exc()
             sys.exit(127)
 
-    # for expired_application_deployment_directory in active_applications_due_for_suspension['suspend_application_deployment_directories']:        
-    #     try:
-    #         deployment_directory = '{}/{}'.format(deployment_maintenance_repository_directory, expired_application_deployment_directory)
-    #         deployment_directory = ''.join(deployment_directory.split())
-    #         destination_directory = deployment_directory.replace(application_deployments_templates_path, suspend_application_deployments_templates_path)
-    #         print('Suspend DIRECTORY     : {}'.format(deployment_directory))
-    #         os.replace(src=deployment_directory, dst=destination_directory)
-    #         git_updates = True
-    #     except:
-    #         pass
-
     # Step 5: Move suspended applications due for resurrection
     for suspended_application_deployment_file in suspended_applications_due_for_resurrection['suspend_application_deployment_files']:        
         try:
             print('Resurrect FILE        : {}'.format(suspended_application_deployment_file))
             destination_file = suspended_application_deployment_file.replace(suspend_application_manifest_path, application_manifest_relative_directory)
             print('    Destination       : {}'.format(destination_file))
-
-            # TODO Update timestamp labels
-
             os.replace(src=suspended_application_deployment_file, dst=destination_file)
+            update_application_manifest_timestamp_labels(file_path=destination_file)
             git_updates = True
         except:
             traceback.print_exc()
