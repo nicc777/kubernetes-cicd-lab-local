@@ -74,7 +74,7 @@ python3 "application_helm_integration.py"                             \
     "http://gitlab:8080/lab/application-repo-01.git"                  \
     "http://gitlab:8080/lab/deployment-maintenance.git"
 
-python3 "application_cleanup.py"                \
+python3 "application_suspend.py"                \
     "/tmp/script-tests/deployment-maintenance"  \
     "TEST"
 
