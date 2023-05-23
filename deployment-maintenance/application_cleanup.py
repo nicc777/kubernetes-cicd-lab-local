@@ -21,6 +21,12 @@ def get_utc_timestamp(with_decimal: bool=False):
     return int(timestamp)
 
 
+def convert_unix_time_to_time_readable_string(unit_time: int)->str:
+    ts = int('{}'.format(unit_time)) # Make sure it's an int
+    ts_str = datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    return '{}   -> {}'.format(ts, ts_str)
+
+
 def parse_args()->tuple:
     # Expecting: app.py maint-repo-dir __MODE__
     args_result = list()
@@ -87,6 +93,11 @@ def identify_expired_applications(application_deployment_files: list)->dict:
         if expired:
             expired_application_deployment_files.append(file_path)
             expired_application_deployment_directories.append(deployment_path)
+
+        print('identify_expired_applications(): NOW           : {}'.format(convert_unix_time_to_time_readable_string(unit_time=now)))
+        print('identify_expired_applications(): FILE          : {}'.format(file_path))
+        print('identify_expired_applications(): EXPIRES AT    : {}'.format(convert_unix_time_to_time_readable_string(unit_time=file_expiry_label_value)))
+
     return {
         'expired_application_deployment_files': expired_application_deployment_files,
         'expired_application_deployment_directories': expired_application_deployment_directories
