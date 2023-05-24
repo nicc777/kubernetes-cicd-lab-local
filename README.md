@@ -113,3 +113,4 @@ To follow the entire LAB, it is recommended to follow each task to completion in
 | 04          | [task_04_deploy_jenkins_docker.md](./task_04_deploy_jenkins_docker.md)                                         |
 | 05          | [task_05_integrate_jenkins_and_gitlab.md](./task_05_integrate_jenkins_and_gitlab.md)                           |
 | 06          | [task_06_setup_jenkins_build_for_test_application.md](./task_06_setup_jenkins_build_for_test_application.md)   |
+| Lab Notes   | [NOTES.md](./NOTES.md)
