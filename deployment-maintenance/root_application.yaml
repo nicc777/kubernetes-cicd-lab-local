@@ -27,7 +27,7 @@ spec:
     - Validate=false 
     - CreateNamespace=true
     - PrunePropagationPolicy=foreground 
-    - PruneLast=true 
+    - PruneLast=true
     retry:
       limit: 5
       backoff:

@@ -5,6 +5,7 @@ from datetime import datetime
 import copy
 import shutil
 import re
+import json
 
 import yaml
 try:
@@ -35,10 +36,28 @@ def convert_unix_time_to_time_readable_string(unit_time: int)->str:
     return '{}   -> {}'.format(ts, ts_str)
 
 
+def read_text_file(path_to_file: str, read_lines_that_match_this_regex: list=LINE_MATCH_REGEX)->list:
+    content = list()
+    with open(path_to_file, 'r') as f:
+        for line in f:
+            read_line = True
+            if read_lines_that_match_this_regex is not None: # We are only interested really in a couple of lines in these files
+                if isinstance(read_lines_that_match_this_regex, list):
+                    if pattern_match(input_str=line, patterns=LINE_MATCH_REGEX) is True: 
+                        print('* Matching line: {}'.format(line))
+                        content.append(line)
+                        read_line = False
+            if read_line is True:
+                content.append(line)
+    return content
+
+
 def read_suspend_configuration(deployment_environment: str='lab')->dict:
     config = dict()
     try:
-        yaml_data = read_text_file(path_to_file='configs/application-suspend.yaml')
+        yaml_data = ''
+        for line in read_text_file(path_to_file='configs/application-suspend.yaml', read_lines_that_match_this_regex=None):
+            yaml_data = '{}{}\n'.format(yaml_data, line)
         for data in yaml.load_all(yaml_data, Loader=Loader):
             if 'environment' in data:
                 if isinstance(data['environment'], list):
@@ -88,22 +107,6 @@ def list_files(directory: str)->list:
         traceback.print_exc()
         sys.exit(127)
     return copy.deepcopy(result)
-
-
-def read_text_file(path_to_file: str, read_lines_that_match_this_regex: list=LINE_MATCH_REGEX)->list:
-    content = list()
-    with open(path_to_file, 'r') as f:
-        for line in f:
-            read_line = True
-            if read_lines_that_match_this_regex is not None: # We are only interested really in a couple of lines in these files
-                if isinstance(read_lines_that_match_this_regex, list):
-                    if pattern_match(input_str=line, patterns=LINE_MATCH_REGEX) is True: 
-                        print('* Matching line: {}'.format(line))
-                        content.append(line)
-                        read_line = False
-            if read_line is True:
-                content.append(line)
-    return content
 
 
 def delete_directory(dir: str)->bool:
@@ -218,12 +221,14 @@ def identify_suspended_applications_due_for_resurrection(application_deployment_
 
 
 def update_application_manifest_timestamp_labels(file_path: str):
+    print('Updating application manifest labels...')
     config = read_suspend_configuration()
     """
         config['initial-deployment-uptime']
         config['suspend-duration']
         config['maximum-uptime']
     """
+    print('config: {}'.format(json.dumps(config)))
 
     application_manifest_content_lines = read_text_file(path_to_file=file_path, read_lines_that_match_this_regex=None)
     application_manifest_labels = read_text_file(path_to_file=file_path)
@@ -240,6 +245,8 @@ def update_application_manifest_timestamp_labels(file_path: str):
     updated_suspend_start = current_suspend_end + config['initial-deployment-uptime']
     updated_suspend_end = updated_suspend_start + config['suspend-duration']
     
+    print('updated_suspend_start = {}   -> {}'.format(updated_suspend_start, convert_unix_time_to_time_readable_string(unit_time=updated_suspend_start)))
+    print('updated_suspend_end   = {}   -> {}'.format(updated_suspend_end, convert_unix_time_to_time_readable_string(unit_time=updated_suspend_end)))
     
     if updated_suspend_start > expires: # No need to suspend again
         updated_suspend_start = 9999999999
@@ -256,8 +263,10 @@ def update_application_manifest_timestamp_labels(file_path: str):
             application_manifest_content = '{}{}\n'.format(application_manifest_content, new_suspend_end_str)
         else:
             application_manifest_content = '{}{}\n'.format(application_manifest_content, line)
+    print('Writing updated application manifest file to {}'.format(file_path))
     with open(file_path, 'w') as f:
         f.write(application_manifest_content)
+    print('Update to file "{}" DONE'.format(file_path))
         
 
 def main():
@@ -271,16 +280,31 @@ def main():
     deployment_maintenance_repository_directory, mode = parse_args()
     if mode.lower().startswith('test'):
         do_git_push = False
+    delete_helm_files_script_file_name = '{}/helm_directories_to_delete.txt'.format(deployment_maintenance_repository_directory)
 
-    # step 2: Get all current active and suspended deployments in scope
+    # Step 2: Delete previously marked helm charts
+    if os.path.exists(delete_helm_files_script_file_name):
+        print('Helm directories from previous application cleanup detected - deleting')
+        try:
+            with open(delete_helm_files_script_file_name, 'r') as f:
+                for dir_to_delete in f:
+                    print('   Deleting Helm directory: {}'.format(dir_to_delete))
+                    delete_directory(dir=dir_to_delete)
+        except:
+            traceback.print_exc()
+            sys.exit(127)
+    else:
+        print('NO Helm directories from previous application cleanup detected')
+
+    # step 3: Get all current active and suspended deployments in scope
     active_application_deployments = list_files(directory='{}/{}'.format(deployment_maintenance_repository_directory, application_manifest_relative_directory))
     suspended_application_deployments = list_files(directory='{}/{}'.format(deployment_maintenance_repository_directory, suspend_application_manifest_path))
 
-    # Step 3: Identify deployments ready for suspend and resurrection actions
+    # Step 4: Identify deployments ready for suspend and resurrection actions
     active_applications_due_for_suspension = identify_active_application_due_for_suspend(application_deployment_files=active_application_deployments)
     suspended_applications_due_for_resurrection = identify_suspended_applications_due_for_resurrection(application_deployment_files=suspended_application_deployments)
 
-    # Step 4: Move active applications due for suspension
+    # Step 5: Move active applications due for suspension
     for application_deployment_file in active_applications_due_for_suspension['suspend_application_deployment_files']:        
         try:
             print('Suspend FILE          : {}'.format(application_deployment_file))
@@ -292,7 +316,17 @@ def main():
             traceback.print_exc()
             sys.exit(127)
 
-    # Step 5: Move suspended applications due for resurrection
+    # TODO Step 6: delete expired apps in suspended state
+    for suspended_application_deployment_file in suspended_applications_due_for_resurrection['expired_application_deployment_files']:        
+        try:
+            print('DELETE    FILE        : {}'.format(suspended_application_deployment_file))
+            
+            git_updates = True
+        except:
+            traceback.print_exc()
+            sys.exit(127)
+
+    # Step 7: Move suspended applications due for resurrection
     for suspended_application_deployment_file in suspended_applications_due_for_resurrection['suspend_application_deployment_files']:        
         try:
             print('Resurrect FILE        : {}'.format(suspended_application_deployment_file))
@@ -304,12 +338,8 @@ def main():
         except:
             traceback.print_exc()
             sys.exit(127)
-
-
-    # TODO delete with expired apps in suspended state
     
-
-    # Step 7: PUSH Changes to GIT
+    # Step 8: PUSH Changes to GIT
     print('mode        : {}'.format(mode))
     print('do_git_push : {}'.format(do_git_push))
     print('git_updates : {}'.format(git_updates))
