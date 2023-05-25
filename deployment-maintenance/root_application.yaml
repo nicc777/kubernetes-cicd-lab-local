@@ -21,7 +21,7 @@ spec:
   syncPolicy:
     automated:
       prune: true
-      selfHeal: true
+      selfHeal: false # Required to be false to delete all resources when application manifest is deleted from Git
       allowEmpty: false
     syncOptions:     
     - Validate=false 

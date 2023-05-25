@@ -288,8 +288,8 @@ def main():
         try:
             with open(delete_helm_files_script_file_name, 'r') as f:
                 for dir_to_delete in f:
-                    print('   Deleting Helm directory: {}'.format(dir_to_delete))
-                    delete_directory(dir=dir_to_delete)
+                    print('   Deleting Helm directory: {}'.format(dir_to_delete.strip()))
+                    delete_directory(dir=dir_to_delete.strip())
         except:
             traceback.print_exc()
             sys.exit(127)
@@ -320,8 +320,15 @@ def main():
     for suspended_application_deployment_file in suspended_applications_due_for_resurrection['expired_application_deployment_files']:        
         try:
             print('DELETE    FILE        : {}'.format(suspended_application_deployment_file))
-            
+            os.unlink(suspended_application_deployment_file)
             git_updates = True
+        except:
+            traceback.print_exc()
+            sys.exit(127)
+    for helm_dir_newly_marked_for_delete in suspended_applications_due_for_resurrection['expired_application_deployment_directories']:
+        try:
+            with open(delete_helm_files_script_file_name, 'a') as f:
+                f.write('{}\n'.format(helm_dir_newly_marked_for_delete))
         except:
             traceback.print_exc()
             sys.exit(127)

@@ -123,6 +123,7 @@ def main():
     deployment_maintenance_repository_directory, mode = parse_args()
     if mode.lower().startswith('test'):
         do_git_push = False
+    delete_helm_files_script_file_name = '{}/helm_directories_to_delete.txt'.format(deployment_maintenance_repository_directory)
 
     # step 2: Get all current deployments in scope
     current_application_deployments = list_files(directory='{}/{}'.format(deployment_maintenance_repository_directory, application_manifest_relative_directory))
@@ -135,21 +136,23 @@ def main():
     #for expired_application_deployment_file, expired_application_deployment_directory in expired_application_deployment_files.items():
     for expired_application_deployment_file in expired_applications['expired_application_deployment_files']:        
         try:
-            print('Deleting FILE      : {}'.format(expired_application_deployment_file))
+            print('Deleting FILE                  : {}'.format(expired_application_deployment_file))
             os.unlink(expired_application_deployment_file)
             git_updates = True
         except:
             pass
 
     for expired_application_deployment_directory in expired_applications['expired_application_deployment_directories']:        
+        directory_to_delete = '{}/{}'.format(deployment_maintenance_repository_directory, expired_application_deployment_directory)
+        directory_to_delete = ''.join(directory_to_delete.split())
+        print('Marking for deletion DIRECTORY : {}'.format(directory_to_delete))
+        # delete_directory(dir=directory_to_delete)
         try:
-            directory_to_delete = '{}/{}'.format(deployment_maintenance_repository_directory, expired_application_deployment_directory)
-            directory_to_delete = ''.join(directory_to_delete.split())
-            print('Deleting DIRECTORY : {}'.format(directory_to_delete))
-            delete_directory(dir=directory_to_delete)
-            git_updates = True
+            with open(delete_helm_files_script_file_name, 'a') as f:
+                f.write('{}\n'.format(expired_application_deployment_directory))
         except:
-            pass
+            traceback.print_exc()
+        git_updates = True
 
 
     # Step 5: Update Git repo if required
