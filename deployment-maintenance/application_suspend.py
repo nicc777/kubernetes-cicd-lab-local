@@ -237,6 +237,7 @@ def update_application_manifest_timestamp_labels(file_path: str):
     updated_suspend_end = 0
     expires = 0
     for line in application_manifest_labels:
+            line = line.replace('\n', '')
             if pattern_match(input_str=line, patterns=SUSPEND_END_PATTERN) is True:
                 current_suspend_end = int(line.split(' ')[-1])
             elif pattern_match(input_str=line, patterns=EXPIRES_PATTERN) is True:
@@ -316,7 +317,7 @@ def main():
             traceback.print_exc()
             sys.exit(127)
 
-    # TODO Step 6: delete expired apps in suspended state
+    # Step 6: delete expired apps in suspended state
     for suspended_application_deployment_file in suspended_applications_due_for_resurrection['expired_application_deployment_files']:        
         try:
             print('DELETE    FILE        : {}'.format(suspended_application_deployment_file))

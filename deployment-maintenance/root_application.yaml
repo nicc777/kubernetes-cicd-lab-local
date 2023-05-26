@@ -10,19 +10,24 @@ metadata:
 spec:
   project: default
   source:
+    # chart: awesome-application
     repoURL: http://gitlab:8080/lab/deployment-maintenance.git
     targetRevision: main
     path: deployments/lab/application-manifests
     directory:
       recurse: true
+    # helm:
+    #   passCredentials: true
+    #   valueFiles:
+    #   - values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
   syncPolicy:
     automated:
       prune: true
-      selfHeal: false # Required to be false to delete all resources when application manifest is deleted from Git
-      allowEmpty: false
+      selfHeal: true # Required to be false to delete all resources when application manifest is deleted from Git
+      allowEmpty: true
     syncOptions:     
     - Validate=false 
     - CreateNamespace=true

@@ -20,7 +20,7 @@ spec:
       passCredentials: false
       valueFiles:
       - values.yaml
-      ignoreMissingValueFiles: false
+      ignoreMissingValueFiles: true
       skipCrds: true
   destination:
     server: https://kubernetes.default.svc
