@@ -258,6 +258,7 @@ def update_application_manifest_timestamp_labels(file_path: str):
 
     application_manifest_content = ''
     for line in application_manifest_content_lines:
+        line = line.replace('\n', '')
         if '    suspend-start:' in line:
             application_manifest_content = '{}{}\n'.format(application_manifest_content, new_suspend_start_str)
         elif '    suspend-end:' in line:
@@ -289,8 +290,13 @@ def main():
         try:
             with open(delete_helm_files_script_file_name, 'r') as f:
                 for dir_to_delete in f:
-                    print('   Deleting Helm directory: {}'.format(dir_to_delete.strip()))
-                    delete_directory(dir=dir_to_delete.strip())
+                    if dir_to_delete is not None:
+                        if isinstance(dir_to_delete, str):
+                            if len(dir_to_delete.strip()) > 0:
+                                print('   Deleting Helm directory: {}'.format(dir_to_delete.strip()))
+                                delete_directory(dir=dir_to_delete.strip())
+            os.unlink(delete_helm_files_script_file_name)
+            git_updates = True
         except:
             traceback.print_exc()
             sys.exit(127)

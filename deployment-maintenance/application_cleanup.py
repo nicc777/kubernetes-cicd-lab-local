@@ -71,7 +71,7 @@ def read_text_file(path_to_file: str)->list:
             # We are only interested really in a couple of lines in these files
             if pattern_match(input_str=line, patterns=LINE_MATCH_REGEX) is True:
                 print('* Matching line: {}'.format(line))
-                content.append(line.strip())
+                content.append(line)
     return content
 
 
@@ -85,6 +85,7 @@ def identify_expired_applications(application_deployment_files: list)->dict:
         file_content_lines = read_text_file(path_to_file=file_path)
         file_expiry_label_value = 0
         for line in file_content_lines:
+            print('identify_expired_applications(): LINE          : {}'.format(line))
             if pattern_match(input_str=line, patterns=EXPIRES_PATTERN) is True:
                 file_expiry_label_value = int(line.split(' ')[-1])
                 if file_expiry_label_value < now:
