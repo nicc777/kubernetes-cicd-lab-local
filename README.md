@@ -70,18 +70,18 @@ It is highly recommended that the LAB systems be shutdown after use to avoid pot
 
 Below is a list of objectives of the LAB. Each checked item means the task is more-or-less ready for LAB use. In this lab you fill find instructions for the following:
 
-* [x] Deploy a 4x node K3s Kubernetes cluster using Multipass on Ubuntu (script)
-* [x] Deploy ArgoCD using Helm, including some post installation steps
-* [x] Prepare environment and install Gitlab in Docker, including some post installation steps
-* [x] Prepare environment and install Jenkins in Docker
-* [x] Setup Jenkins to use Docker Plugin for Builds
-* [x] Create initial Gitlab repositories
-* [x] Link Jenkins and Gitlab and perform first builds
-* [x] Link ArgoCD to Gitlab for first deployments
-* [x] Perform some common operational procedures:
-  * [x] Update a project and subsequent deployment
-  * [ ] Add a suspend feature to remove deployments temporarily or permanently based on configuration
-  * [x] Delete expired deployments
+* Deploy a 4x node K3s Kubernetes cluster using Multipass on Ubuntu (script)
+* Deploy ArgoCD using Helm, including some post installation steps
+* Prepare environment and install Gitlab in Docker, including some post installation steps
+* Prepare environment and install Jenkins in Docker
+* Setup Jenkins to use Docker Plugin for Builds
+* Create initial Gitlab repositories
+* Link Jenkins and Gitlab and perform first builds
+* Link ArgoCD to Gitlab for first deployments
+* Perform some common operational procedures:
+  * Update a project and subsequent deployment
+  * Add a suspend feature to remove deployments temporarily or permanently based on configuration
+  * Delete expired deployments
 
 The Web UI will also be used for ArgoCD and Jenkins and as such some steps may be explained based on Firefox. Most of the concepts should also work perfectly on other browsers.
 
