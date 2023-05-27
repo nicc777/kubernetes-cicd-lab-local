@@ -8,6 +8,7 @@
   - [Create Git Credentials in Jenkins](#create-git-credentials-in-jenkins)
 - [References](#references)
 
+Quick Nav: [Main](./README.md) | [Task 1](./task_01_deploy_k3s.md) | [Task 2](./task_02_deploy_argocd_in_kubernetes.md) | [Task 3](./task_03_deploy_gitlab_docker.md) | [Task 4](./task_04_deploy_jenkins_docker.md) | Task 5 | [Task 6](./task_06_setup_jenkins_build_for_test_application.md) | [Notes](./NOTES.md)
 
 # Webhook Integration Test
 
@@ -100,3 +101,5 @@ The username must be the same as the username created in Gitlab.
 
 * Gitlab Plugin Documentation: https://plugins.jenkins.io/gitlab-plugin/
 * Gitlab Webhook Documentation: https://docs.gitlab.com/ee/user/project/integrations/webhooks.html
+
+Quick Nav: [Main](./README.md) | [Task 1](./task_01_deploy_k3s.md) | [Task 2](./task_02_deploy_argocd_in_kubernetes.md) | [Task 3](./task_03_deploy_gitlab_docker.md) | [Task 4](./task_04_deploy_jenkins_docker.md) | Task 5 | [Task 6](./task_06_setup_jenkins_build_for_test_application.md) | [Notes](./NOTES.md)

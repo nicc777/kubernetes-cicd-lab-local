@@ -6,6 +6,7 @@
   - [Suspend Logic](#suspend-logic)
 - [Strategy for Testing](#strategy-for-testing)
 
+Quick Nav: [Main](./README.md) | [Task 1](./task_01_deploy_k3s.md) | [Task 2](./task_02_deploy_argocd_in_kubernetes.md) | [Task 3](./task_03_deploy_gitlab_docker.md) | [Task 4](./task_04_deploy_jenkins_docker.md) | [Task 5](./task_05_integrate_jenkins_and_gitlab.md) | [Task 6](./task_06_setup_jenkins_build_for_test_application.md) | Notes
 
 # Observations during development and testing
 
@@ -128,3 +129,5 @@ rm -frR /tmp/script-tests
 
 # No run the previous commands again...
 ```
+
+Quick Nav: [Main](./README.md) | [Task 1](./task_01_deploy_k3s.md) | [Task 2](./task_02_deploy_argocd_in_kubernetes.md) | [Task 3](./task_03_deploy_gitlab_docker.md) | [Task 4](./task_04_deploy_jenkins_docker.md) | [Task 5](./task_05_integrate_jenkins_and_gitlab.md) | [Task 6](./task_06_setup_jenkins_build_for_test_application.md) | Notes

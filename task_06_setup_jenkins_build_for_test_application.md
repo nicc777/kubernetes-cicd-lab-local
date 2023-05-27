@@ -25,6 +25,7 @@
 - [Pipeline Executions](#pipeline-executions)
   - [Guidance for testing](#guidance-for-testing)
 
+Quick Nav: [Main](./README.md) | [Task 1](./task_01_deploy_k3s.md) | [Task 2](./task_02_deploy_argocd_in_kubernetes.md) | [Task 3](./task_03_deploy_gitlab_docker.md) | [Task 4](./task_04_deploy_jenkins_docker.md) | [Task 5](./task_05_integrate_jenkins_and_gitlab.md) | Task 6 | [Notes](./NOTES.md)
 
 # Task Overview and Objectives
 
@@ -312,3 +313,5 @@ Given the following configuration as in the example, a good strategy for testing
 
 > **Note**
 > Take note of some of the authors own observations in the local file [NOTES.md](./NOTES.md)
+
+Quick Nav: [Main](./README.md) | [Task 1](./task_01_deploy_k3s.md) | [Task 2](./task_02_deploy_argocd_in_kubernetes.md) | [Task 3](./task_03_deploy_gitlab_docker.md) | [Task 4](./task_04_deploy_jenkins_docker.md) | [Task 5](./task_05_integrate_jenkins_and_gitlab.md) | Task 6 | [Notes](./NOTES.md)

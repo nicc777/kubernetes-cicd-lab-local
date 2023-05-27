@@ -7,6 +7,8 @@
   - [First Freestyle Project](#first-freestyle-project)
   - [A Test Python Project](#a-test-python-project)
 
+Quick Nav: [Main](./README.md) | [Task 1](./task_01_deploy_k3s.md) | [Task 2](./task_02_deploy_argocd_in_kubernetes.md) | [Task 3](./task_03_deploy_gitlab_docker.md) | Task 4 | [Task 5](./task_05_integrate_jenkins_and_gitlab.md) | [Task 6](./task_06_setup_jenkins_build_for_test_application.md) | [Notes](./NOTES.md)
+
 # Why Jenkins and why Docker?
 
 Jenkins have been used for years now and is a very well known and common CI tool. In many organizations in fulfills both the CI and CD roles.
@@ -264,4 +266,4 @@ pipeline {
 
 When configuring the Jenkins Project, take note of the Webhook URL.
 
-
+Quick Nav: [Main](./README.md) | [Task 1](./task_01_deploy_k3s.md) | [Task 2](./task_02_deploy_argocd_in_kubernetes.md) | [Task 3](./task_03_deploy_gitlab_docker.md) | Task 4 | [Task 5](./task_05_integrate_jenkins_and_gitlab.md) | [Task 6](./task_06_setup_jenkins_build_for_test_application.md) | [Notes](./NOTES.md)

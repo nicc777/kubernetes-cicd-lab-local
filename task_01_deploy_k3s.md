@@ -3,6 +3,7 @@
 - [Accessing the cluster](#accessing-the-cluster)
 - [Test](#test)
 
+Quick Nav: [Main](./README.md) | Task 1 | [Task 2](./task_02_deploy_argocd_in_kubernetes.md) | [Task 3](./task_03_deploy_gitlab_docker.md) | [Task 4](./task_04_deploy_jenkins_docker.md) | [Task 5](./task_05_integrate_jenkins_and_gitlab.md) | [Task 6](./task_06_setup_jenkins_build_for_test_application.md) | [Notes](./NOTES.md)
 
 # Deploy k3s
 
@@ -45,3 +46,4 @@ node2   Ready    <none>                 2d1h   v1.26.4+k3s1
 node1   Ready    control-plane,master   2d1h   v1.24.10+k3s1
 ```
 
+Quick Nav: [Main](./README.md) | Task 1 | [Task 2](./task_02_deploy_argocd_in_kubernetes.md) | [Task 3](./task_03_deploy_gitlab_docker.md) | [Task 4](./task_04_deploy_jenkins_docker.md) | [Task 5](./task_05_integrate_jenkins_and_gitlab.md) | [Task 6](./task_06_setup_jenkins_build_for_test_application.md) | [Notes](./NOTES.md)
