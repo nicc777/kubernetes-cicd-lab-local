@@ -268,11 +268,11 @@ Configure the pipeline using the following example screenshots:
 
 Configure the pipeline using the following example screenshots:
 
-![Suspend Pipeline 1](screenshots/suspend-management-pipeline-01.png)
+![Delete Pipeline 1](screenshots/delete-expired-pipeline-01.png)
 
-![Suspend Pipeline 2](screenshots/suspend-management-pipeline-02.png)
+![Delete Pipeline 2](screenshots/delete-expired-pipeline-02.png)
 
-![Suspend Pipeline 3](screenshots/suspend-management-pipeline-03.png)
+![Delete Pipeline 3](screenshots/delete-expired-pipeline-03.png)
 
 > **Note**
 > The pipeline script can be found in the local file [`deployment-maintenance/application_cleanup.py`](./deployment-maintenance/application_cleanup.py). This file is also in the `deployment-maintenance` repository
