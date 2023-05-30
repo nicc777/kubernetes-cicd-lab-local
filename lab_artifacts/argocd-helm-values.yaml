@@ -1964,7 +1964,7 @@ server:
     enabled: false
     # -- Domains for the Google Managed Certificate
     domains:
-    - argocd.example.com
+    - argocd.example.tld
 
   ## Create a Google FrontendConfig Custom Resource, for use with the GKE Ingress Controller
   ## https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features#configuring_ingress_features_through_frontendconfig_parameters
