@@ -88,7 +88,7 @@ sudo echo "10.15.174.3   argocd argocd-grpc argocd.example.tld argocd-grpc.examp
 
 ## Web Browser Proxy Configuration
 
-For the LAB environment, it is recommended you use a separate browser profile.
+For the LAB environment, it is recommended you use a separate browser profile ([Firefox Documentation on Profiles](https://support.mozilla.org/en-US/kb/profile-manager-create-remove-switch-firefox-profiles)).
 
 In Firefox, the proxy settings should be the following:
 
@@ -101,7 +101,7 @@ The `no-proxy` settings (for easy copy/paste):
 ```
 
 > **Note**
-> The `192.168.2.18` IP address, is the IP address of the LAB system
+> The `192.168.2.18` IP address, is the IP address of the LAB system. Adjust to suite your environment.
 
 # Test
 
