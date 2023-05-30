@@ -202,8 +202,10 @@ docker build --no-cache -t jenkins-slave-modified .
 
 export LATEST_IMAGE_ID=`docker image ls | grep jenkins-slave-modified | grep -v $USER | awk '{print $3}'`
 
+# This command assumes you are using Docker Hub. Adjust the tag to suite your container registry needs.
 docker tag $LATEST_IMAGE_ID $USER/jenkins-slave-modified:latest
 
+# This assumes you have a Docker Hub user with the username the same as your Linux username... Adjust to suite your needs.
 docker push $USER/jenkins-slave-modified:latest
 
 # NOTE: Add this key in GitLab for the Jenkins User - required to PUSH to git
