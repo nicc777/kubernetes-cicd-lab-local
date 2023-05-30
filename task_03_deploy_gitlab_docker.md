@@ -44,6 +44,8 @@ sudo service docker restart
 > **Warning**
 > This process will make your LAB environment insecure and it is highly recommended that he LAB network is in a network that does not allow any direct connection from the Internet. 
 
+Refer to the [Docker documentation](https://docs.docker.com/engine/security/protect-access/#use-tls-https-to-protect-the-docker-daemon-socket) to secure your exposed Docker TCP port.
+
 # Running Gitlab in Docker
 
 > **Warning**
