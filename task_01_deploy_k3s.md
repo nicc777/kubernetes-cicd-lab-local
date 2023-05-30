@@ -15,6 +15,9 @@ chmod 700 lab_artifacts/*.sh
 lab_artifacts/deploy_k3s_on_multipass.sh
 ```
 
+> **Note**
+> There are some settings in the file you can modify to suite your needs, for example the number of nodes.
+
 # Accessing the cluster
 
 A separate Kubernetes client configuration file is created in `$PWD/k3s.yaml`, and you can easily use this by setting the following environment variable:
