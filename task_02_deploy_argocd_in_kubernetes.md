@@ -16,10 +16,13 @@ There are some values that need to be edited in the values file.
 To get the original values, run the following command:
 
 ```shell
-helm show values argo/argo-cd --version=5.33.1 > argocd-helm-values.yaml
+helm show values argo/argo-cd --version=5.33.1 > /tmp/argocd-helm-values.yaml
 ```
 
 One of the major changes was to add _**Ingress**_ to the configuration.
+
+> **Note**
+> In general you don't have to supply specific versions, however, there are at least two things to keep in mind: 1) In a LAB setting, you need repeatable experiments under a consistent environment. If a version changes by the time this LAB is followed, it may affect outcomes; and 2) Kubernetes major version changes usually introduce breaking changes. It is good to know which versions of applications is compatible with which version of Kubernetes and then target those known working versions based on the cluster version.
 
 # Deploy ArgoCD in Kubernetes 
 
