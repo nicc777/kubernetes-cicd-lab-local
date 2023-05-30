@@ -51,6 +51,8 @@ Refer to the [Docker documentation](https://docs.docker.com/engine/security/prot
 > **Warning**
 > Gitlab can be fairly resource intensive. If your system has 32 GiB or less RAM, I would recommend running Gitlab on a second computer.
 
+Also note that the IP addresses shown in the example needs to be updated to your environment.
+
 The commands below is essentially a summary of the [official documentation](https://docs.gitlab.com/ee/install/docker.html):
 
 ```shell
